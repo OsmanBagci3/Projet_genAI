@@ -3,3 +3,6 @@ qdrant-client
 sentence-transformers
 rank-bm25
 langfuse
+python-dotenv
+streamlit
+pandas

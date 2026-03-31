@@ -5,17 +5,17 @@ personne -> patients
 
 doctor -> doctors
 doctors -> doctors
-médecin -> doctors
-médecins -> doctors
+mÃ©decin -> doctors
+mÃ©decins -> doctors
 specialist -> doctors
 specialty -> doctors.specialty
-spécialité -> doctors.specialty
+spÃ©cialitÃ© -> doctors.specialty
 
 department -> departments
 departments -> departments
 service -> departments
 services -> departments
-unité -> departments
+unitÃ© -> departments
 floor -> departments.floor_number
 building -> departments.building_name
 
@@ -38,11 +38,11 @@ prescriptions -> prescriptions
 ordonnance -> prescriptions
 ordonnances -> prescriptions
 medication -> prescriptions.medication_name
-médicament -> prescriptions.medication_name
+mÃ©dicament -> prescriptions.medication_name
 medicine -> prescriptions.medication_name
 dosage -> prescriptions.dosage
 duration -> prescriptions.duration_days
-durée -> prescriptions.duration_days
+durÃ©e -> prescriptions.duration_days
 
 cardiology -> departments.department_name
 neurology -> departments.department_name

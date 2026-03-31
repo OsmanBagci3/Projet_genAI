@@ -1,52 +1,50 @@
 ﻿DATABASE: hospital
 
-⚠️ THESE ARE THE ONLY 5 TABLES. NO OTHER TABLES EXIST.
+TABLE patients
+- patient_id (INTEGER, PRIMARY KEY)
+- first_name (TEXT)
+- last_name (TEXT)
+- gender (TEXT)
+- birth_date (TEXT)
+- city (TEXT)
+- phone (TEXT)
 
-TABLE patients (5 COLUMNS ONLY)
-- patient_id (INTEGER, PRIMARY KEY) - unique identifier
-- first_name (TEXT) - patient first name
-- last_name (TEXT) - patient last name
-- gender (TEXT) - patient gender
-- birth_date (TEXT) - patient birth date
-- city (TEXT) - patient city
-- phone (TEXT) - patient phone number
+TABLE departments
+- department_id (INTEGER, PRIMARY KEY)
+- department_name (TEXT)
+- floor_number (INTEGER)
+- building_name (TEXT)
 
-TABLE departments (4 COLUMNS ONLY)
-- department_id (INTEGER, PRIMARY KEY) - unique identifier
-- department_name (TEXT) - name of department (e.g., 'Cardiology', 'Neurology')
-- floor_number (INTEGER) - floor number
-- building_name (TEXT) - name of building
+TABLE doctors
+- doctor_id (INTEGER, PRIMARY KEY)
+- first_name (TEXT)
+- last_name (TEXT)
+- specialty (TEXT)
+- department_id (INTEGER, FOREIGN KEY -> departments.department_id)
+- email (TEXT)
 
-TABLE doctors (6 COLUMNS ONLY)
-- doctor_id (INTEGER, PRIMARY KEY) - unique identifier
-- first_name (TEXT) - doctor first name
-- last_name (TEXT) - doctor last name
-- specialty (TEXT) - doctor specialty
-- department_id (INTEGER, FOREIGN KEY -> departments.department_id) - link to department
-- email (TEXT) - doctor email
+TABLE appointments
+- appointment_id (INTEGER, PRIMARY KEY)
+- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id)
+- doctor_id (INTEGER, FOREIGN KEY -> doctors.doctor_id)
+- department_id (INTEGER, FOREIGN KEY -> departments.department_id)
+- appointment_date (TEXT)
+- reason (TEXT)
+- diagnosis (TEXT)
+- status (TEXT)
 
-TABLE appointments (8 COLUMNS ONLY)
-- appointment_id (INTEGER, PRIMARY KEY) - unique identifier
-- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id) - link to patient
-- doctor_id (INTEGER, FOREIGN KEY -> doctors.doctor_id) - link to doctor
-- department_id (INTEGER, FOREIGN KEY -> departments.department_id) - link to department
-- appointment_date (TEXT) - date of appointment
-- reason (TEXT) - reason for appointment
-- diagnosis (TEXT) - diagnosis
-- status (TEXT) - status (e.g., 'completed', 'scheduled')
+TABLE prescriptions
+- prescription_id (INTEGER, PRIMARY KEY)
+- appointment_id (INTEGER, FOREIGN KEY -> appointments.appointment_id)
+- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id)
+- medication_name (TEXT)
+- dosage (TEXT)
+- duration_days (INTEGER)
 
-TABLE prescriptions (6 COLUMNS ONLY)
-- prescription_id (INTEGER, PRIMARY KEY) - unique identifier
-- appointment_id (INTEGER, FOREIGN KEY -> appointments.appointment_id) - link to appointment
-- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id) - link to patient
-- medication_name (TEXT) - name of medication
-- dosage (TEXT) - medication dosage
-- duration_days (INTEGER) - duration in days
-
-RELATIONSHIPS (only valid joins)
-- patients.patient_id -> appointments.patient_id
-- patients.patient_id -> prescriptions.patient_id
-- doctors.doctor_id -> appointments.doctor_id
-- departments.department_id -> doctors.department_id
-- departments.department_id -> appointments.department_id
-- appointments.appointment_id -> prescriptions.appointment_id
+RELATIONSHIPS
+- patients -> appointments : one-to-many
+- doctors -> appointments : one-to-many
+- departments -> doctors : one-to-many
+- departments -> appointments : one-to-many
+- appointments -> prescriptions : one-to-many
+- patients -> prescriptions : one-to-many

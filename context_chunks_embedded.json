@@ -4368,7 +4368,7 @@
   },
   {
     "content_id": "vocab_patients_doctors",
-    "text": "﻿patient -> patients\npatients -> patients\nmalade -> patients\npersonne -> patients\ndoctor -> doctors\ndoctors -> doctors\nmédecin -> doctors\nmédecins -> doctors\nspecialist -> doctors\nspecialty -> doctors.specialty\nspécialité -> doctors.specialty",
+    "text": "﻿patient -> patients\npatients -> patients\nmalade -> patients\npersonne -> patients\ndoctor -> doctors\ndoctors -> doctors\nmÃ©decin -> doctors\nmÃ©decins -> doctors\nspecialist -> doctors\nspecialty -> doctors.specialty\nspÃ©cialitÃ© -> doctors.specialty",
     "source_file": "vocabulary.txt",
     "chunk_type": "vocabulary",
     "entity": "patients_doctors",
@@ -4765,7 +4765,7 @@
   },
   {
     "content_id": "vocab_departments_appointments",
-    "text": "department -> departments\ndepartments -> departments\nservice -> departments\nservices -> departments\nunité -> departments\nfloor -> departments.floor_number\nbuilding -> departments.building_name\nappointment -> appointments\nappointments -> appointments\nconsultation -> appointments\nconsultations -> appointments\nrendez-vous -> appointments\nvisit -> appointments\nvisits -> appointments\nreason -> appointments.reason\nmotif -> appointments.reason\ndiagnosis -> appointments.diagnosis\ndiagnostic -> appointments.diagnosis\nstatus -> appointments.status\ndate -> appointments.appointment_date\ncardiology -> departments.department_name\nneurology -> departments.department_name\npediatrics -> departments.department_name\nemergency -> departments.department_name\ndermatology -> departments.department_name",
+    "text": "department -> departments\ndepartments -> departments\nservice -> departments\nservices -> departments\nunitÃ© -> departments\nfloor -> departments.floor_number\nbuilding -> departments.building_name\nappointment -> appointments\nappointments -> appointments\nconsultation -> appointments\nconsultations -> appointments\nrendez-vous -> appointments\nvisit -> appointments\nvisits -> appointments\nreason -> appointments.reason\nmotif -> appointments.reason\ndiagnosis -> appointments.diagnosis\ndiagnostic -> appointments.diagnosis\nstatus -> appointments.status\ndate -> appointments.appointment_date\ncardiology -> departments.department_name\nneurology -> departments.department_name\npediatrics -> departments.department_name\nemergency -> departments.department_name\ndermatology -> departments.department_name",
     "source_file": "vocabulary.txt",
     "chunk_type": "vocabulary",
     "entity": "departments_appointments",
@@ -5162,7 +5162,7 @@
   },
   {
     "content_id": "vocab_prescriptions",
-    "text": "prescription -> prescriptions\nprescriptions -> prescriptions\nordonnance -> prescriptions\nordonnances -> prescriptions\nmedication -> prescriptions.medication_name\nmédicament -> prescriptions.medication_name\nmedicine -> prescriptions.medication_name\ndosage -> prescriptions.dosage\nduration -> prescriptions.duration_days\ndurée -> prescriptions.duration_days",
+    "text": "prescription -> prescriptions\nprescriptions -> prescriptions\nordonnance -> prescriptions\nordonnances -> prescriptions\nmedication -> prescriptions.medication_name\nmÃ©dicament -> prescriptions.medication_name\nmedicine -> prescriptions.medication_name\ndosage -> prescriptions.dosage\nduration -> prescriptions.duration_days\ndurÃ©e -> prescriptions.duration_days",
     "source_file": "vocabulary.txt",
     "chunk_type": "vocabulary",
     "entity": "prescriptions",
