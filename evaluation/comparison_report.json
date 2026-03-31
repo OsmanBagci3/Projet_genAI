@@ -1,0 +1,166 @@
+{
+  "finetuned": {
+    "model": "TinyLlama-finetuned",
+    "count": 14,
+    "avg_sql_valid": 0.7143,
+    "avg_execution_ok": 0.7143,
+    "avg_result_set_match": 0.1429,
+    "avg_final_score": 0.4857
+  },
+  "baseline": {
+    "model": "Mistral-7B-baseline",
+    "count": 20,
+    "avg_sql_valid": 0.0,
+    "avg_execution_ok": 0.0,
+    "avg_result_set_match": 0.0,
+    "avg_final_score": 0.0
+  },
+  "comparison": {
+    "delta_sql_valid": 0.7143,
+    "delta_execution_ok": 0.7143,
+    "delta_result_set_match": 0.1429,
+    "delta_final_score": 0.4857
+  },
+  "test_results": [
+    {
+      "question": "Count all doctors.",
+      "category": "count",
+      "expected_sql": "SELECT COUNT(*) AS total_doctors FROM doctors;",
+      "generated_sql": "SELECT COUNT(*) FROM appointments WHERE appointment_date >= '2021-01-01' AND appointment_date < '2021-02-01';",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Show prescription count per medication.",
+      "category": "aggregation",
+      "expected_sql": "SELECT pr.medication_name, COUNT(*) AS total_prescriptions FROM prescriptions pr GROUP BY pr.medication_name ORDER BY total_prescriptions DESC;",
+      "generated_sql": "SELECT p.first_name, COUNT(pr.prescription_id) AS prescription_count FROM prescriptions pr JOIN patients p ON pr.patient_id = p.patient_id GROUP BY p.first_name ORDER BY prescription_count DESC;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Which medications are most used in Neurology?",
+      "category": "semantic",
+      "expected_sql": "SELECT pr.medication_name, COUNT(*) AS total_prescriptions FROM prescriptions pr JOIN appointments a ON pr.appointment_id = a.appointment_id JOIN departments dep ON a.department_id = dep.department_id WHERE dep.department_name = 'Neurology' GROUP BY pr.medication_name ORDER BY total_prescriptions DESC;",
+      "generated_sql": "SELECT medication_name, COUNT(prescription_id) AS prescriptions_count FROM prescriptions GROUP BY medication_name HAVING prescriptions_count > 1 ORDER BY prescriptions_count DESC;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Which medication is prescribed most often?",
+      "category": "topk",
+      "expected_sql": "SELECT pr.medication_name, COUNT(*) AS total FROM prescriptions pr GROUP BY pr.medication_name ORDER BY total DESC LIMIT 1;",
+      "generated_sql": "SELECT DISTINCT medication_name FROM prescriptions WHERE appointment_id = (SELECT appointment_id FROM appointments WHERE department_id = 1 AND status = 'Active') ORDER BY COUNT(*) DESC LIMIT 1;",
+      "sql_valid": 0,
+      "execution_ok": 0,
+      "result_set_match": 0,
+      "final_score": 0.0
+    },
+    {
+      "question": "How many physicians are registered?",
+      "category": "count",
+      "expected_sql": "SELECT COUNT(*) AS total_doctors FROM doctors;",
+      "generated_sql": "SELECT COUNT(*) AS num_physicians FROM physicians;",
+      "sql_valid": 0,
+      "execution_ok": 0,
+      "result_set_match": 0,
+      "final_score": 0.0
+    },
+    {
+      "question": "How many distinct patients does each doctor have?",
+      "category": "count_distinct",
+      "expected_sql": "SELECT d.first_name, d.last_name, COUNT(DISTINCT a.patient_id) AS distinct_patients FROM doctors d JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.first_name, d.last_name ORDER BY distinct_patients DESC;",
+      "generated_sql": "SELECT COUNT(DISTINCT doctor_id) FROM appointments;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Total number of departments?",
+      "category": "count",
+      "expected_sql": "SELECT COUNT(*) AS total_departments FROM departments;",
+      "generated_sql": "SELECT COUNT(*) FROM departments;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Which appointments were cancelled?",
+      "category": "filter",
+      "expected_sql": "SELECT a.appointment_id, a.appointment_date, a.reason FROM appointments a WHERE a.status = 'cancelled' ORDER BY a.appointment_date DESC;",
+      "generated_sql": "SELECT a.appointment_date, COUNT(a.appointment_id) AS appointment_count FROM appointments a WHERE a.status = 'cancelled' GROUP BY a.appointment_date ORDER BY appointment_date DESC;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "Which patients are male?",
+      "category": "filter",
+      "expected_sql": "SELECT p.first_name, p.last_name FROM patients p WHERE p.gender = 'M' ORDER BY p.last_name;",
+      "generated_sql": "SELECT p.first_name, p.last_name FROM patients p WHERE p.gender = 'M' ORDER BY p.first_name;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 1,
+      "final_score": 1.0
+    },
+    {
+      "question": "Which patients live in Liege?",
+      "category": "filter",
+      "expected_sql": "SELECT p.first_name, p.last_name FROM patients p WHERE p.city = 'Liege' ORDER BY p.last_name;",
+      "generated_sql": "SELECT p.first_name, p.last_name, d.specialty FROM patients p JOIN doctors d ON p.department_id = d.department_id WHERE d.department_id = 1 ORDER BY p.first_name;",
+      "sql_valid": 0,
+      "execution_ok": 0,
+      "result_set_match": 0,
+      "final_score": 0.0
+    },
+    {
+      "question": "Which medications were prescribed?",
+      "category": "semantic",
+      "expected_sql": "SELECT DISTINCT pr.medication_name FROM prescriptions pr ORDER BY pr.medication_name;",
+      "generated_sql": "SELECT medication_name FROM prescriptions WHERE appointment_id = a.appointment_id AND department_id = dep.department_id ORDER BY medication_name;",
+      "sql_valid": 0,
+      "execution_ok": 0,
+      "result_set_match": 0,
+      "final_score": 0.0
+    },
+    {
+      "question": "Total patients registered?",
+      "category": "count",
+      "expected_sql": "SELECT COUNT(*) AS total_patients FROM patients;",
+      "generated_sql": "SELECT COUNT(*) AS total_patients FROM patients;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 1,
+      "final_score": 1.0
+    },
+    {
+      "question": "Give me the doctor count.",
+      "category": "count",
+      "expected_sql": "SELECT COUNT(*) AS total_doctors FROM doctors;",
+      "generated_sql": "SELECT COUNT(*) AS doctor_count FROM doctors WHERE department_id = 1;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    },
+    {
+      "question": "What are the 5 most recent appointments?",
+      "category": "topk",
+      "expected_sql": "SELECT a.appointment_date, p.first_name, p.last_name, a.reason FROM appointments a JOIN patients p ON a.patient_id = p.patient_id ORDER BY a.appointment_date DESC LIMIT 5;",
+      "generated_sql": "SELECT a.appointment_date, a.reason, a.diagnosis, p.first_name, p.last_name, d.department_name FROM appointments a JOIN patients p ON a.patient_id = p.patient_id JOIN departments d ON a.department_id = d.department_id WHERE a.status = 'Completed' ORDER BY a.appointment_date DESC LIMIT 5;",
+      "sql_valid": 1,
+      "execution_ok": 1,
+      "result_set_match": 0,
+      "final_score": 0.6
+    }
+  ]
+}
