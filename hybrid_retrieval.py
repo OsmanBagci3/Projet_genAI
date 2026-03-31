@@ -3,9 +3,13 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any, Dict, List
 
-from dense_retrieval import DenseRetriever, QDRANT_PATH, COLLECTION_NAME, EMBEDDING_MODEL_NAME
+from dense_retrieval import (
+    COLLECTION_NAME,
+    EMBEDDING_MODEL_NAME,
+    QDRANT_PATH,
+    DenseRetriever,
+)
 from sparse_retrieval import SparseRetriever, load_chunks
-
 
 TOP_K_DENSE = 5
 TOP_K_SPARSE = 5
@@ -25,7 +29,10 @@ class HybridRetriever:
             embedding_model_name=EMBEDDING_MODEL_NAME,
         )
 
-        chunks = load_chunks(__import__("pathlib").Path(__file__).resolve().parent / "context_chunks.json")
+        chunks = load_chunks(
+            __import__("pathlib").Path(__file__).resolve().parent
+            / "context_chunks.json"
+        )
         self.sparse_retriever = SparseRetriever(chunks)
 
     def search(
@@ -132,6 +139,7 @@ def main() -> None:
             print_results(query, results)
     finally:
         retriever.close()
+
 
 if __name__ == "__main__":
     main()

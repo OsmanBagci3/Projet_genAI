@@ -11,17 +11,18 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 try:
     from langfuse import Langfuse
+
     _langfuse: Optional[Langfuse] = Langfuse()
 except Exception:
     _langfuse = None
 
 from execute_sql import (
-    ChainOfThoughtPlanner,
     DB_PATH,
+    ChainOfThoughtPlanner,
+    SchemaInspector,
     SQLExecutor,
     SQLGenerator,
     SQLValidator,
-    SchemaInspector,
 )
 from hybrid_retrieval import HybridRetriever
 from query_construction import QueryConstructor
@@ -125,11 +126,15 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
 
             route = router.route(question)
 
-            trace = _langfuse.trace(
-                name="evaluation-item",
-                input={"id": qid, "question": question},
-                metadata={"dataset": str(dataset_path)},
-            ) if _langfuse else None
+            trace = (
+                _langfuse.trace(
+                    name="evaluation-item",
+                    input={"id": qid, "question": question},
+                    metadata={"dataset": str(dataset_path)},
+                )
+                if _langfuse
+                else None
+            )
 
             if trace:
                 trace.event(name="routing", output={"route": route})
@@ -155,18 +160,24 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
                     )
 
                 cot_plan = planner.plan(question, inspector.summary())
-                prompt = constructor.build_context(question, reranked, cot_plan=cot_plan)
+                prompt = constructor.build_context(
+                    question, reranked, cot_plan=cot_plan
+                )
                 if trace:
                     trace.event(name="prompt", output={"prompt": prompt})
 
                 max_attempts = 3
                 for attempt in range(1, max_attempts + 1):
                     attempts = attempt
-                    raw_sql = generator.generate(prompt) if attempt == 1 else generator.regenerate_with_feedback(
-                        base_prompt=prompt,
-                        failed_sql=generated_sql,
-                        error_message=validation_msg,
-                        schema_summary=inspector.summary(),
+                    raw_sql = (
+                        generator.generate(prompt)
+                        if attempt == 1
+                        else generator.regenerate_with_feedback(
+                            base_prompt=prompt,
+                            failed_sql=generated_sql,
+                            error_message=validation_msg,
+                            schema_summary=inspector.summary(),
+                        )
                     )
                     generated_sql = validator.clean_sql(raw_sql)
                     is_valid, validation_msg = validator.validate(generated_sql)
@@ -191,8 +202,12 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
                     actual_cols, actual_rows = executor.execute(generated_sql)
                     execution_ok = 1
                     expected_cols, expected_rows = executor.execute(expected_sql)
-                    exact = result_exact_match(expected_cols, expected_rows, actual_cols, actual_rows)
-                    set_match = result_set_match(expected_cols, expected_rows, actual_cols, actual_rows)
+                    exact = result_exact_match(
+                        expected_cols, expected_rows, actual_cols, actual_rows
+                    )
+                    set_match = result_set_match(
+                        expected_cols, expected_rows, actual_cols, actual_rows
+                    )
                     sem = semantic_score(generated_sql, required, forbidden)
                     if trace:
                         trace.event(
@@ -274,12 +289,34 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
     n = len(per_item)
     summary = {
         "count": n,
-        "avg_sql_valid": round(sum(x["scores"]["sql_valid"] for x in per_item) / n, 4) if n else 0.0,
-        "avg_execution_ok": round(sum(x["scores"]["execution_ok"] for x in per_item) / n, 4) if n else 0.0,
-        "avg_result_exact_match": round(sum(x["scores"]["result_exact_match"] for x in per_item) / n, 4) if n else 0.0,
-        "avg_result_set_match": round(sum(x["scores"]["result_set_match"] for x in per_item) / n, 4) if n else 0.0,
-        "avg_semantic_score": round(sum(x["scores"]["semantic_score"] for x in per_item) / n, 4) if n else 0.0,
-        "avg_final_score": round(sum(x["scores"]["final_score"] for x in per_item) / n, 4) if n else 0.0,
+        "avg_sql_valid": (
+            round(sum(x["scores"]["sql_valid"] for x in per_item) / n, 4) if n else 0.0
+        ),
+        "avg_execution_ok": (
+            round(sum(x["scores"]["execution_ok"] for x in per_item) / n, 4)
+            if n
+            else 0.0
+        ),
+        "avg_result_exact_match": (
+            round(sum(x["scores"]["result_exact_match"] for x in per_item) / n, 4)
+            if n
+            else 0.0
+        ),
+        "avg_result_set_match": (
+            round(sum(x["scores"]["result_set_match"] for x in per_item) / n, 4)
+            if n
+            else 0.0
+        ),
+        "avg_semantic_score": (
+            round(sum(x["scores"]["semantic_score"] for x in per_item) / n, 4)
+            if n
+            else 0.0
+        ),
+        "avg_final_score": (
+            round(sum(x["scores"]["final_score"] for x in per_item) / n, 4)
+            if n
+            else 0.0
+        ),
     }
 
     report = {
@@ -294,8 +331,13 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
             input={"dataset": str(dataset_path), "count": n},
             output=summary,
         )
-        summary_trace.score(name="avg_final_score", value=float(summary["avg_final_score"]))
-        summary_trace.score(name="avg_result_exact_match", value=float(summary["avg_result_exact_match"]))
+        summary_trace.score(
+            name="avg_final_score", value=float(summary["avg_final_score"])
+        )
+        summary_trace.score(
+            name="avg_result_exact_match",
+            value=float(summary["avg_result_exact_match"]),
+        )
         _langfuse.flush()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -309,10 +351,24 @@ def run_eval(dataset_path: Path, output_path: Path, limit: int = 0) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate NLQ-to-SQL pipeline with a labeled dataset.")
-    parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET, help="Path to dataset JSON file")
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Path to output report JSON")
-    parser.add_argument("--limit", type=int, default=0, help="Optional limit on number of questions (0 = all)")
+    parser = argparse.ArgumentParser(
+        description="Evaluate NLQ-to-SQL pipeline with a labeled dataset."
+    )
+    parser.add_argument(
+        "--dataset",
+        type=Path,
+        default=DEFAULT_DATASET,
+        help="Path to dataset JSON file",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=DEFAULT_OUTPUT, help="Path to output report JSON"
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="Optional limit on number of questions (0 = all)",
+    )
     return parser.parse_args()
 
 

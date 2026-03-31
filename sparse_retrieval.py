@@ -7,7 +7,6 @@ from typing import Any, Dict, List
 
 from rank_bm25 import BM25Okapi
 
-
 BASE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = BASE_DIR / "context_chunks.json"
 TOP_K = 5
@@ -45,11 +44,7 @@ class SparseRetriever:
         query_tokens = tokenize(query)
         scores = self.bm25.get_scores(query_tokens)
 
-        ranked = sorted(
-            enumerate(scores),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        ranked = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
 
         results: List[Dict[str, Any]] = []
         for rank, (idx, score) in enumerate(ranked[:top_k], start=1):

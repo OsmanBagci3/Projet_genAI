@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Dict, List
-
 
 BASE_DIR = Path(__file__).resolve().parent
 CONTEXT_DIR = BASE_DIR / "context"
@@ -136,25 +135,54 @@ class ContextChunker:
         for line in lines:
             lower = line.lower()
 
-            if any(word in lower for word in [
-                "patient", "malade", "personne",
-                "doctor", "médecin", "specialty", "spécialité"
-            ]):
+            if any(
+                word in lower
+                for word in [
+                    "patient",
+                    "malade",
+                    "personne",
+                    "doctor",
+                    "médecin",
+                    "specialty",
+                    "spécialité",
+                ]
+            ):
                 patient_doctor.append(line)
 
-            elif any(word in lower for word in [
-                "department", "service", "unité", "floor", "building",
-                "appointment", "consultation", "rendez-vous",
-                "reason", "motif", "diagnosis", "diagnostic",
-                "status", "date"
-            ]):
+            elif any(
+                word in lower
+                for word in [
+                    "department",
+                    "service",
+                    "unité",
+                    "floor",
+                    "building",
+                    "appointment",
+                    "consultation",
+                    "rendez-vous",
+                    "reason",
+                    "motif",
+                    "diagnosis",
+                    "diagnostic",
+                    "status",
+                    "date",
+                ]
+            ):
                 departments_appointments.append(line)
 
-            elif any(word in lower for word in [
-                "prescription", "ordonnance",
-                "medication", "médicament", "medicine",
-                "dosage", "duration", "durée"
-            ]):
+            elif any(
+                word in lower
+                for word in [
+                    "prescription",
+                    "ordonnance",
+                    "medication",
+                    "médicament",
+                    "medicine",
+                    "dosage",
+                    "duration",
+                    "durée",
+                ]
+            ):
                 prescriptions.append(line)
 
             else:
@@ -218,10 +246,14 @@ class ContextChunker:
 
     def _chunk_examples(self, text: str) -> List[ContextChunk]:
         chunks: List[ContextChunk] = []
-        blocks = re.findall(r"(QUESTION:.*?SQL:\s*.*?;)(?=\n\s*QUESTION:|$)", text, flags=re.DOTALL)
+        blocks = re.findall(
+            r"(QUESTION:.*?SQL:\s*.*?;)(?=\n\s*QUESTION:|$)", text, flags=re.DOTALL
+        )
 
         for idx, block in enumerate(blocks, start=1):
-            question_match = re.search(r"QUESTION:\s*(.+?)\nSQL:", block, flags=re.DOTALL)
+            question_match = re.search(
+                r"QUESTION:\s*(.+?)\nSQL:", block, flags=re.DOTALL
+            )
             sql_match = re.search(r"SQL:\s*(.+)", block, flags=re.DOTALL)
 
             question = question_match.group(1).strip() if question_match else ""
@@ -258,10 +290,17 @@ class ContextChunker:
 
         for line in content_lines:
             lower = line.lower()
-            if any(word in lower for word in [
-                "department", "medication", "consultations", "appointments table",
-                "outside the database scope", "schema is insufficient"
-            ]):
+            if any(
+                word in lower
+                for word in [
+                    "department",
+                    "medication",
+                    "consultations",
+                    "appointments table",
+                    "outside the database scope",
+                    "schema is insufficient",
+                ]
+            ):
                 domain_lines.append(line)
             else:
                 general_lines.append(line)
@@ -295,7 +334,9 @@ class ContextChunker:
 
     def _chunk_join_patterns(self, text: str) -> List[ContextChunk]:
         chunks: List[ContextChunk] = []
-        blocks = re.findall(r"(PATTERN\s+\d+.*?)(?=PATTERN\s+\d+|$)", text, flags=re.DOTALL)
+        blocks = re.findall(
+            r"(PATTERN\s+\d+.*?)(?=PATTERN\s+\d+|$)", text, flags=re.DOTALL
+        )
 
         for block in blocks:
             lines = [line.strip() for line in block.splitlines() if line.strip()]
@@ -303,7 +344,12 @@ class ContextChunker:
                 continue
 
             pattern_name = lines[1]
-            safe_name = pattern_name.lower().replace(" -> ", "_").replace("-", "_").replace(" ", "_")
+            safe_name = (
+                pattern_name.lower()
+                .replace(" -> ", "_")
+                .replace("-", "_")
+                .replace(" ", "_")
+            )
             subtype = "multi_join" if pattern_name.count("->") >= 2 else "simple_join"
 
             chunks.append(
@@ -361,7 +407,9 @@ class ContextChunker:
 
 def save_chunks_to_json(chunks: List[ContextChunk], output_path: Path) -> None:
     data = [asdict(chunk) for chunk in chunks]
-    output_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    output_path.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def main() -> None:

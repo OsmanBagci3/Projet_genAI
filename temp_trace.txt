@@ -1,0 +1,17 @@
+Query: What are the 5 most recent appointments with patient names?
+Provider: claude
+Route: SQL_QUERY
+SQL Valid: True
+Num Rows: 5
+Duration: 14.55s
+
+Generated SQL:
+SELECT 
+    a.appointment_id,
+    a.appointment_date,
+    p.first_name,
+    p.last_name
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+ORDER BY a.appointment_date DESC
+LIMIT 5;

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-
 MAX_SCHEMA = 2
 MAX_JOINS = 2
 MAX_EXAMPLES = 3
@@ -12,7 +11,9 @@ MAX_VOCAB = 1
 
 
 class QueryConstructor:
-    def build_context(self, query: str, reranked_chunks: List[Dict[str, Any]], cot_plan: str = "") -> str:
+    def build_context(
+        self, query: str, reranked_chunks: List[Dict[str, Any]], cot_plan: str = ""
+    ) -> str:
         selected = self._select_chunks(reranked_chunks)
 
         rules = self._collect(selected, "rule")
@@ -29,7 +30,6 @@ class QueryConstructor:
             "You are an expert SQLite query generator with strict attention to schema accuracy.\n"
             "TASK: Generate ONLY a valid SQLite SELECT query. Output ONLY SQL code.\n"
             "NO explanations, NO markdown, NO comments, NO extra text.\n\n"
-            
             "CRITICAL RULES:\n"
             "1. Use ONLY tables and columns from the SCHEMA section below.\n"
             "2. NEVER create or invent table names or column names.\n"
@@ -43,7 +43,7 @@ class QueryConstructor:
         # Schema first - most important
         if schemas:
             prompt_parts.append(
-                "SCHEMA (Only these tables and columns exist - NOTHING ELSE):\n" 
+                "SCHEMA (Only these tables and columns exist - NOTHING ELSE):\n"
                 + "\n\n".join(schemas)
             )
 
@@ -106,7 +106,9 @@ class QueryConstructor:
 
         return "\n\n" + "\n\n---\n\n".join(prompt_parts) + "\n"
 
-    def _select_chunks(self, reranked_chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _select_chunks(
+        self, reranked_chunks: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         selected: List[Dict[str, Any]] = []
 
         counters = {
@@ -153,4 +155,6 @@ class QueryConstructor:
 
     @staticmethod
     def _collect(chunks: List[Dict[str, Any]], chunk_type: str) -> List[str]:
-        return [chunk["text"] for chunk in chunks if chunk.get("chunk_type") == chunk_type]
+        return [
+            chunk["text"] for chunk in chunks if chunk.get("chunk_type") == chunk_type
+        ]

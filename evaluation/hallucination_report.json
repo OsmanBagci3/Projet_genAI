@@ -1,0 +1,426 @@
+{
+  "mistral": {
+    "summary": {
+      "total_queries": 20,
+      "total_hallucinations": 0,
+      "critical_hallucinations": 0,
+      "warning_hallucinations": 0,
+      "avg_hallucination_score": 1.0,
+      "hallucination_rate": 0.0
+    },
+    "details": [
+      {
+        "sql": "SELECT COUNT(p.patient_id) AS total_patients\nFROM patients p;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q01",
+        "question": "How many patients are in the database?"
+      },
+      {
+        "sql": "SELECT d.doctor_id, d.first_name, d.last_name\nFROM doctors d\nWHERE d.specialty = 'Cardiology';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q02",
+        "question": "Which doctors work in Cardiology?"
+      },
+      {
+        "sql": "SELECT COUNT(DISTINCT a.appointment_id) AS TotalAppointments\nFROM appointments a;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q03",
+        "question": "How many appointments are in the database?"
+      },
+      {
+        "sql": "SELECT a.appointment_id, a.status\nFROM appointments a\nWHERE a.status = 'completed';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q04",
+        "question": "Which appointments were completed?"
+      },
+      {
+        "sql": "SELECT prescriptions.medication_name\nFROM prescriptions\nJOIN appointments ON appointments.appointment_id = prescriptions.appointment_id;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q05",
+        "question": "Which medications were prescribed?"
+      },
+      {
+        "sql": "SELECT DISTINCT p.first_name, p.last_name\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nWHERE pr.medication_name = 'Paracetamol';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q06",
+        "question": "Which patients received Paracetamol?"
+      },
+      {
+        "sql": "SELECT d.doctor_id, COUNT(a.appointment_id) AS total_appointments\nFROM appointments a\nINNER JOIN doctors d ON a.doctor_id = d.doctor_id\nGROUP BY d.doctor_id;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q07",
+        "question": "How many appointments did each doctor have?"
+      },
+      {
+        "sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments\nFROM appointments a\nLEFT JOIN departments dep ON a.department_id = dep.department_id\nGROUP BY dep.department_id, dep.department_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q08",
+        "question": "How many appointments took place in each department?"
+      },
+      {
+        "sql": "SELECT d.doctor_id, COUNT(a.appointment_id) AS appointment_count\nFROM doctors d\nINNER JOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id\nORDER BY appointment_count DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q09",
+        "question": "Which doctor had the most appointments?"
+      },
+      {
+        "sql": "SELECT p.patient_id, COUNT(p.patient_id) as prescription_count\nFROM prescriptions AS p\nJOIN prescriptions AS p2 ON p.patient_id = p2.patient_id AND p.prescription_id <> p2.prescription_id\nGROUP BY p.patient_id\nHAVING COUNT(p.patient_id) > 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q10",
+        "question": "Which patients have more than one prescription?"
+      },
+      {
+        "sql": "SELECT a.appointment_id, p.patient_id, a.diagnosis, a.reason, a.status\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nJOIN departments dep ON a.department_id = dep.department_id\nJOIN doctors d ON a.doctor_id = d.doctor_id\nWHERE dep.department_name = 'Cardiology';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q11",
+        "question": "Show appointments in Cardiology."
+      },
+      {
+        "sql": "SELECT medication_name, COUNT(prescription_id) as prescription_count\nFROM prescriptions pr\nINNER JOIN appointments a ON pr.appointment_id = a.appointment_id\nGROUP BY medication_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q12",
+        "question": "Count prescriptions by medication."
+      },
+      {
+        "sql": "SELECT a.appointment_date, p.first_name AS patient_first_name, p.last_name AS patient_last_name\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nORDER BY a.appointment_date DESC\nLIMIT 5;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q13",
+        "question": "What are the 5 most recent appointments with patient names?"
+      },
+      {
+        "sql": "SELECT dep.department_id, dep.department_name, COUNT(a.appointment_id) as num_completed_appointments\nFROM appointments a\nJOIN departments dep ON dep.department_id = a.department_id\nJOIN doctors d ON d.doctor_id = a.doctor_id\nWHERE a.status = 'Completed'\nGROUP BY dep.department_id, dep.department_name\nORDER BY num_completed_appointments DESC;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q14",
+        "question": "Show all departments ranked by number of completed appointments."
+      },
+      {
+        "sql": "SELECT diagnosis, COUNT(appointment_id) AS frequency\nFROM appointments a\nLEFT JOIN departments dep ON a.department_id = dep.department_id\nLEFT JOIN doctors d ON a.doctor_id = d.doctor_id\nWHERE dep.department_name = 'Emergency'\nGROUP BY diagnosis\nORDER BY frequency DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q15",
+        "question": "Which diagnosis appears most frequently in Emergency?"
+      },
+      {
+        "sql": "SELECT p.patient_id, COUNT(DISTINCT dep.department_id) as departments_visited\nFROM patients p\nJOIN appointments a ON p.patient_id = a.patient_id\nJOIN departments dep ON a.department_id = dep.department_id\nGROUP BY p.patient_id\nHAVING COUNT(DISTINCT dep.department_id) > 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q16",
+        "question": "Show patients who visited more than one department and how many departments they visited."
+      },
+      {
+        "sql": "SELECT p.city, count(distinct a.patient_id) as num_patients\nFROM patients p\nJOIN appointments a ON p.patient_id = a.patient_id\nWHERE p.city IS NOT NULL\nGROUP BY p.city\nORDER BY num_patients DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q17",
+        "question": "Which city has the highest number of patients with at least one appointment?"
+      },
+      {
+        "sql": "SELECT pr.medication_name, COUNT(*) as prescription_count\nFROM prescriptions pr\nINNER JOIN appointments a ON pr.appointment_id = a.appointment_id\nINNER JOIN departments dep ON a.department_id = dep.department_id\nWHERE dep.department_name = 'Neurology' AND a.status = 'Completed'\nGROUP BY pr.medication_name\nORDER BY prescription_count DESC;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q18",
+        "question": "Which medications are most prescribed for Neurology appointments?"
+      },
+      {
+        "sql": "SELECT d.doctor_id, d.first_name, d.last_name, COUNT(a.appointment_id) as num_of_appointments\nFROM appointments a\nINNER JOIN doctors d ON a.doctor_id = d.doctor_id\nGROUP BY d.doctor_id\nORDER BY num_of_appointments DESC\nLIMIT 5;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q19",
+        "question": "List the top 5 doctors by number of appointments."
+      },
+      {
+        "sql": "SELECT d.department_name, COUNT(a.appointment_id) AS total_appointments, COUNT(DISTINCT p.patient_id) AS distinct_patients\nFROM appointments a\nLEFT JOIN departments d ON a.department_id = d.department_id\nJOIN patients p ON a.patient_id = p.patient_id\nGROUP BY d.department_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q20",
+        "question": "For each department, show total appointments and distinct patients."
+      }
+    ]
+  },
+  "claude": {
+    "summary": {
+      "total_queries": 20,
+      "total_hallucinations": 0,
+      "critical_hallucinations": 0,
+      "warning_hallucinations": 0,
+      "avg_hallucination_score": 1.0,
+      "hallucination_rate": 0.0
+    },
+    "details": [
+      {
+        "sql": "SELECT COUNT(*) FROM patients p;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q01",
+        "question": "How many patients are in the database?"
+      },
+      {
+        "sql": "SELECT d.first_name, d.last_name\nFROM doctors d\nJOIN departments dep ON d.department_id = dep.department_id\nWHERE dep.department_name = 'Cardiology';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q02",
+        "question": "Which doctors work in Cardiology?"
+      },
+      {
+        "sql": "SELECT COUNT(*) \nFROM appointments a;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q03",
+        "question": "How many appointments are in the database?"
+      },
+      {
+        "sql": "SELECT a.appointment_id, a.appointment_date, a.patient_id, a.doctor_id, a.department_id, a.reason, a.diagnosis\nFROM appointments a\nWHERE a.status = 'completed';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q04",
+        "question": "Which appointments were completed?"
+      },
+      {
+        "sql": "SELECT DISTINCT pr.medication_name \nFROM prescriptions pr;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q05",
+        "question": "Which medications were prescribed?"
+      },
+      {
+        "sql": "SELECT DISTINCT p.first_name, p.last_name\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nWHERE pr.medication_name = 'Paracetamol';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q06",
+        "question": "Which patients received Paracetamol?"
+      },
+      {
+        "sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments\nFROM doctors d\nLEFT JOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id, d.first_name, d.last_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q07",
+        "question": "How many appointments did each doctor have?"
+      },
+      {
+        "sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments\nFROM departments dep\nLEFT JOIN appointments a ON dep.department_id = a.department_id\nGROUP BY dep.department_id, dep.department_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q08",
+        "question": "How many appointments took place in each department?"
+      },
+      {
+        "sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments\nFROM doctors d\nJOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id, d.first_name, d.last_name\nORDER BY total_appointments DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q09",
+        "question": "Which doctor had the most appointments?"
+      },
+      {
+        "sql": "SELECT p.first_name, p.last_name, COUNT(pr.prescription_id) AS total_prescriptions\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nGROUP BY p.patient_id, p.first_name, p.last_name\nHAVING COUNT(pr.prescription_id) > 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q10",
+        "question": "Which patients have more than one prescription?"
+      },
+      {
+        "sql": "SELECT a.appointment_id, a.appointment_date, a.patient_id, a.doctor_id, a.reason, a.diagnosis, a.status\nFROM appointments a\nJOIN departments dep ON a.department_id = dep.department_id\nWHERE dep.department_name = 'Cardiology';",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q11",
+        "question": "Show appointments in Cardiology."
+      },
+      {
+        "sql": "SELECT pr.medication_name, COUNT(*) AS total_prescriptions\nFROM prescriptions pr\nGROUP BY pr.medication_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q12",
+        "question": "Count prescriptions by medication."
+      },
+      {
+        "sql": "SELECT \n    a.appointment_id,\n    p.first_name,\n    p.last_name,\n    a.appointment_date\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nORDER BY a.appointment_date DESC\nLIMIT 5;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q13",
+        "question": "What are the 5 most recent appointments with patient names?"
+      },
+      {
+        "sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS appointment_count\nFROM departments dep\nLEFT JOIN appointments a ON dep.department_id = a.department_id AND a.status = 'completed'\nGROUP BY dep.department_id, dep.department_name\nORDER BY appointment_count DESC;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q14",
+        "question": "Show all departments ranked by number of completed appointments."
+      },
+      {
+        "sql": "SELECT a.diagnosis, COUNT(*) AS frequency\nFROM appointments a\nJOIN departments dep ON a.department_id = dep.department_id\nWHERE dep.department_name = 'Emergency'\nGROUP BY a.diagnosis\nORDER BY frequency DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q15",
+        "question": "Which diagnosis appears most frequently in Emergency?"
+      },
+      {
+        "sql": "SELECT p.first_name, p.last_name, COUNT(DISTINCT a.department_id) AS departments_visited\nFROM patients p\nJOIN appointments a ON p.patient_id = a.patient_id\nGROUP BY p.patient_id, p.first_name, p.last_name\nHAVING COUNT(DISTINCT a.department_id) > 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q16",
+        "question": "Show patients who visited more than one department and how many departments they visited."
+      },
+      {
+        "sql": "SELECT p.city, COUNT(DISTINCT p.patient_id) AS patient_count\nFROM patients p\nJOIN appointments a ON p.patient_id = a.patient_id\nGROUP BY p.city\nORDER BY patient_count DESC\nLIMIT 1;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q17",
+        "question": "Which city has the highest number of patients with at least one appointment?"
+      },
+      {
+        "sql": "SELECT pr.medication_name, COUNT(*) as prescription_count\nFROM appointments a\nJOIN departments dep ON a.department_id = dep.department_id\nJOIN prescriptions pr ON a.appointment_id = pr.appointment_id\nWHERE dep.department_name = 'Neurology'\nGROUP BY pr.medication_name\nORDER BY prescription_count DESC;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q18",
+        "question": "Which medications are most prescribed for Neurology appointments?"
+      },
+      {
+        "sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments\nFROM doctors d\nLEFT JOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id, d.first_name, d.last_name\nORDER BY total_appointments DESC\nLIMIT 5;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q19",
+        "question": "List the top 5 doctors by number of appointments."
+      },
+      {
+        "sql": "SELECT \n    dep.department_name,\n    COUNT(a.appointment_id) AS total_appointments,\n    COUNT(DISTINCT a.patient_id) AS distinct_patients\nFROM departments dep\nLEFT JOIN appointments a ON dep.department_id = a.department_id\nGROUP BY dep.department_id, dep.department_name;",
+        "hallucinations": [],
+        "total_hallucinations": 0,
+        "critical_count": 0,
+        "warning_count": 0,
+        "hallucination_score": 1.0,
+        "id": "Q20",
+        "question": "For each department, show total appointments and distinct patients."
+      }
+    ]
+  }
+}

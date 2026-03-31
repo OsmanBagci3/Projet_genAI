@@ -6,7 +6,6 @@ from typing import Any, Dict, List
 
 from sentence_transformers import SentenceTransformer
 
-
 BASE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = BASE_DIR / "context_chunks.json"
 OUTPUT_FILE = BASE_DIR / "context_chunks_embedded.json"
@@ -38,7 +37,9 @@ def add_embeddings_to_chunks(
     for chunk in chunks:
         text = chunk.get("text", "").strip()
         if not text:
-            raise ValueError(f"Chunk sans texte détecté : {chunk.get('content_id', 'unknown')}")
+            raise ValueError(
+                f"Chunk sans texte détecté : {chunk.get('content_id', 'unknown')}"
+            )
         texts.append(text)
 
     print(f"Génération des embeddings pour {len(texts)} chunks...")

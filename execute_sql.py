@@ -13,6 +13,7 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 try:
     from langfuse import Langfuse
+
     _langfuse: Optional[Langfuse] = Langfuse()
 except Exception:
     _langfuse = None
@@ -99,7 +100,9 @@ class SchemaInspector:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"
+            )
             table_names = [row[0] for row in cursor.fetchall()]
 
             for table in table_names:
@@ -129,11 +132,43 @@ class SQLValidator:
         "replace",
     ]
     SQL_KEYWORDS = {
-        "select", "from", "join", "left", "right", "inner", "outer", "on",
-        "where", "group", "by", "order", "having", "limit", "as", "distinct",
-        "count", "sum", "avg", "min", "max", "and", "or", "not", "in", "like",
-        "is", "null", "asc", "desc", "case", "when", "then", "else", "end",
+        "select",
+        "from",
+        "join",
+        "left",
+        "right",
+        "inner",
+        "outer",
+        "on",
+        "where",
+        "group",
+        "by",
+        "order",
+        "having",
+        "limit",
+        "as",
+        "distinct",
+        "count",
+        "sum",
+        "avg",
+        "min",
+        "max",
+        "and",
+        "or",
+        "not",
+        "in",
+        "like",
+        "is",
+        "null",
+        "asc",
+        "desc",
+        "case",
+        "when",
+        "then",
+        "else",
+        "end",
     }
+
     def __init__(self, schema: SchemaInspector) -> None:
         self.schema = schema
 
@@ -151,7 +186,7 @@ class SQLValidator:
         # Garder à partir du premier SELECT si du texte précède
         match = re.search(r"\bselect\b", text, flags=re.IGNORECASE)
         if match:
-            text = text[match.start():]
+            text = text[match.start() :]
 
         return text.strip()
 
@@ -304,7 +339,9 @@ class SQLExecutor:
         try:
             cursor.execute(sql)
             rows = cursor.fetchall()
-            columns = [desc[0] for desc in cursor.description] if cursor.description else []
+            columns = (
+                [desc[0] for desc in cursor.description] if cursor.description else []
+            )
             return columns, rows
         finally:
             conn.close()
@@ -334,9 +371,9 @@ def print_table(columns: List[str], rows: List[Tuple[Any, ...]]) -> None:
 
 
 def main() -> None:
+    from hybrid_retrieval import HybridRetriever
     from query_construction import QueryConstructor
     from rerank_results import HeuristicReranker
-    from hybrid_retrieval import HybridRetriever
     from router import QueryRouter
 
     hybrid = HybridRetriever()
@@ -371,10 +408,14 @@ def main() -> None:
             print("=" * 120)
 
             # Démarrer une trace Langfuse pour cette question
-            trace = _langfuse.trace(
-                name="nlq-to-sql",
-                input={"question": query},
-            ) if _langfuse else None
+            trace = (
+                _langfuse.trace(
+                    name="nlq-to-sql",
+                    input={"question": query},
+                )
+                if _langfuse
+                else None
+            )
 
             # 0. Routing
             route = router.route(query)
@@ -394,7 +435,13 @@ def main() -> None:
                     trace.score(name="sql_valid", value=0)
                     trace.score(name="execution_success", value=0)
                     trace.score(name="no_error", value=0)
-                    trace.update(output={"status": "routed-non-sql", "route": route, "message": msg})
+                    trace.update(
+                        output={
+                            "status": "routed-non-sql",
+                            "route": route,
+                            "message": msg,
+                        }
+                    )
                     _langfuse.flush()
                 continue
 
@@ -426,11 +473,15 @@ def main() -> None:
             message = ""
 
             for attempt in range(1, max_attempts + 1):
-                raw_sql = generator.generate(prompt) if attempt == 1 else generator.regenerate_with_feedback(
-                    base_prompt=prompt,
-                    failed_sql=sql,
-                    error_message=message,
-                    schema_summary=inspector.summary(),
+                raw_sql = (
+                    generator.generate(prompt)
+                    if attempt == 1
+                    else generator.regenerate_with_feedback(
+                        base_prompt=prompt,
+                        failed_sql=sql,
+                        error_message=message,
+                        schema_summary=inspector.summary(),
+                    )
                 )
                 sql = validator.clean_sql(raw_sql)
                 is_valid, message = validator.validate(sql)
@@ -442,7 +493,12 @@ def main() -> None:
                 if trace:
                     trace.event(
                         name="sql_generation",
-                        output={"attempt": attempt, "sql": sql, "valid": is_valid, "validation_message": message},
+                        output={
+                            "attempt": attempt,
+                            "sql": sql,
+                            "valid": is_valid,
+                            "validation_message": message,
+                        },
                     )
 
                 if is_valid:
@@ -450,13 +506,17 @@ def main() -> None:
 
             if not is_valid:
                 if trace:
-                    trace.event(name="error", output={"error": message, "failed_sql": sql})
+                    trace.event(
+                        name="error", output={"error": message, "failed_sql": sql}
+                    )
                     trace.score(name="sql_valid", value=0)
                     trace.score(name="execution_success", value=0)
                     trace.score(name="no_error", value=0)
                     trace.update(output={"status": "failed", "reason": message})
                     _langfuse.flush()
-                print("\nEchec après correction automatique. Veuillez reformuler la question.")
+                print(
+                    "\nEchec après correction automatique. Veuillez reformuler la question."
+                )
                 continue
 
             # 5. Execution
@@ -466,17 +526,22 @@ def main() -> None:
                 if trace:
                     trace.event(
                         name="execution",
-                        output={"columns": columns, "rows": [list(r) for r in rows[:5]]},
+                        output={
+                            "columns": columns,
+                            "rows": [list(r) for r in rows[:5]],
+                        },
                     )
                     trace.score(name="sql_valid", value=1)
                     trace.score(name="execution_success", value=1 if rows else 0)
                     trace.score(name="no_error", value=1)
-                    trace.update(output={
-                        "status": "success",
-                        "sql": sql,
-                        "rows_returned": len(rows),
-                        "attempts": attempt,
-                    })
+                    trace.update(
+                        output={
+                            "status": "success",
+                            "sql": sql,
+                            "rows_returned": len(rows),
+                            "attempts": attempt,
+                        }
+                    )
                     _langfuse.flush()
             except Exception as e:
                 print(f"\nErreur lors de l'exécution SQL : {e}")
@@ -491,6 +556,7 @@ def main() -> None:
             print("\n")
     finally:
         hybrid.close()
+
 
 if __name__ == "__main__":
     main()
