@@ -6,7 +6,6 @@ from typing import Dict, List, Literal, Tuple
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-
 RouteType = Literal["SQL_QUERY", "SCHEMA_HELP", "OUT_OF_SCOPE"]
 
 
@@ -33,15 +32,15 @@ class SemanticRouter:
             RouteExample("Which patients received Paracetamol?", "SQL_QUERY"),
             RouteExample("Who is the busiest doctor?", "SQL_QUERY"),
             RouteExample("Show patient names with their doctors.", "SQL_QUERY"),
-
             # SCHEMA_HELP
             RouteExample("Which table contains prescriptions?", "SCHEMA_HELP"),
             RouteExample("What column stores diagnosis?", "SCHEMA_HELP"),
             RouteExample("Show the database schema.", "SCHEMA_HELP"),
-            RouteExample("What is the structure of the appointments table?", "SCHEMA_HELP"),
+            RouteExample(
+                "What is the structure of the appointments table?", "SCHEMA_HELP"
+            ),
             RouteExample("Which columns exist in doctors?", "SCHEMA_HELP"),
             RouteExample("What fields are stored in patients?", "SCHEMA_HELP"),
-
             # OUT_OF_SCOPE
             RouteExample("What is diabetes?", "OUT_OF_SCOPE"),
             RouteExample("Explain hypertension.", "OUT_OF_SCOPE"),
@@ -97,19 +96,32 @@ class SemanticRouter:
         q = query.lower().strip()
 
         schema_terms = [
-            "which table", "what table", "schema", "column", "columns",
-            "structure", "definition", "fields"
+            "which table",
+            "what table",
+            "schema",
+            "column",
+            "columns",
+            "structure",
+            "definition",
+            "fields",
         ]
         if any(term in q for term in schema_terms):
             return "SCHEMA_HELP"
 
         db_terms = [
-            "patient", "patients",
-            "doctor", "doctors",
-            "appointment", "appointments",
-            "prescription", "prescriptions",
-            "medication", "medications",
-            "diagnosis", "department", "cardiology"
+            "patient",
+            "patients",
+            "doctor",
+            "doctors",
+            "appointment",
+            "appointments",
+            "prescription",
+            "prescriptions",
+            "medication",
+            "medications",
+            "diagnosis",
+            "department",
+            "cardiology",
         ]
         if any(term in q for term in db_terms):
             return "SQL_QUERY"
@@ -117,7 +129,9 @@ class SemanticRouter:
         return "OUT_OF_SCOPE"
 
 
-def print_route(query: str, route: RouteType, score: float, route_scores: Dict[RouteType, float]) -> None:
+def print_route(
+    query: str, route: RouteType, score: float, route_scores: Dict[RouteType, float]
+) -> None:
     print("\n" + "=" * 100)
     print(f"QUESTION : {query}")
     print("=" * 100)

@@ -16,19 +16,61 @@ class QueryTranslator:
         lower = query.lower()
 
         # Cas prescriptions / médicaments
-        if any(word in lower for word in ["paracetamol", "medication", "medications", "prescription", "prescriptions", "drug", "drugs"]):
+        if any(
+            word in lower
+            for word in [
+                "paracetamol",
+                "medication",
+                "medications",
+                "prescription",
+                "prescriptions",
+                "drug",
+                "drugs",
+            ]
+        ):
             variants.extend(self._prescription_variants(query))
 
         # Cas doctors / departments
-        if any(word in lower for word in ["doctor", "doctors", "médecin", "médecins", "cardiology", "department", "departments", "service"]):
+        if any(
+            word in lower
+            for word in [
+                "doctor",
+                "doctors",
+                "médecin",
+                "médecins",
+                "cardiology",
+                "department",
+                "departments",
+                "service",
+            ]
+        ):
             variants.extend(self._doctor_department_variants(query))
 
         # Cas appointments
-        if any(word in lower for word in ["appointment", "appointments", "consultation", "consultations", "rendez-vous"]):
+        if any(
+            word in lower
+            for word in [
+                "appointment",
+                "appointments",
+                "consultation",
+                "consultations",
+                "rendez-vous",
+            ]
+        ):
             variants.extend(self._appointment_variants(query))
 
         # Cas schema help
-        if any(word in lower for word in ["which table", "what table", "contains", "schema", "column", "columns"]):
+        if any(
+            word in lower
+            for word in [
+                "which table",
+                "what table",
+                "contains",
+                "schema",
+                "column",
+                "columns",
+            ]
+        ):
             variants.extend(self._schema_variants(query))
 
         # Nettoyage des doublons en gardant l'ordre
@@ -45,23 +87,37 @@ class QueryTranslator:
     def _prescription_variants(self, query: str) -> List[str]:
         variants = []
 
-        med_match = re.search(r"\b(paracetamol|ibuprofen|aspirin|amoxicillin|insulin)\b", query, flags=re.IGNORECASE)
+        med_match = re.search(
+            r"\b(paracetamol|ibuprofen|aspirin|amoxicillin|insulin)\b",
+            query,
+            flags=re.IGNORECASE,
+        )
         medication = med_match.group(1) if med_match else "medication"
 
         variants.append(f"patients prescribed {medication}")
-        variants.append(f"patients linked to prescriptions with medication_name {medication}")
-        variants.append(f"patient names from prescriptions where medication is {medication}")
+        variants.append(
+            f"patients linked to prescriptions with medication_name {medication}"
+        )
+        variants.append(
+            f"patient names from prescriptions where medication is {medication}"
+        )
 
         return variants
 
     def _doctor_department_variants(self, query: str) -> List[str]:
         variants = []
 
-        dept_match = re.search(r"\b(cardiology|neurology|pediatrics|emergency|dermatology)\b", query, flags=re.IGNORECASE)
+        dept_match = re.search(
+            r"\b(cardiology|neurology|pediatrics|emergency|dermatology)\b",
+            query,
+            flags=re.IGNORECASE,
+        )
         department = dept_match.group(1) if dept_match else "department"
 
         variants.append(f"doctors in {department} department")
-        variants.append(f"doctors joined with departments filtered by department_name {department}")
+        variants.append(
+            f"doctors joined with departments filtered by department_name {department}"
+        )
         variants.append(f"doctors belonging to department {department}")
 
         return variants

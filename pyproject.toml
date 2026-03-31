@@ -1,0 +1,16 @@
+[project]
+name = "nlq-to-sql"
+version = "0.1.0"
+description = "Multi-agent NLQ to SQL system with hybrid retrieval"
+requires-python = ">=3.10"
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

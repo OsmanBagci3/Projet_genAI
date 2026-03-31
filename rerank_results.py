@@ -4,12 +4,13 @@ from typing import Any, Dict, List
 
 from hybrid_retrieval import HybridRetriever
 
-
 TOP_K_FINAL = 5
 
 
 class HeuristicReranker:
-    def rerank(self, query: str, results: List[Dict[str, Any]], top_k_final: int = TOP_K_FINAL) -> List[Dict[str, Any]]:
+    def rerank(
+        self, query: str, results: List[Dict[str, Any]], top_k_final: int = TOP_K_FINAL
+    ) -> List[Dict[str, Any]]:
         query_lower = query.lower()
 
         reranked: List[Dict[str, Any]] = []
@@ -43,19 +44,57 @@ class HeuristicReranker:
                 bonus += 0.05
 
             # 3. Bonus si l'entité semble correspondre à la question
-            if any(word in query_lower for word in ["patient", "patients"]) and "patient" in entity:
+            if (
+                any(word in query_lower for word in ["patient", "patients"])
+                and "patient" in entity
+            ):
                 bonus += 0.15
 
-            if any(word in query_lower for word in ["doctor", "doctors", "médecin", "médecins"]) and "doctor" in entity:
+            if (
+                any(
+                    word in query_lower
+                    for word in ["doctor", "doctors", "médecin", "médecins"]
+                )
+                and "doctor" in entity
+            ):
                 bonus += 0.15
 
-            if any(word in query_lower for word in ["appointment", "appointments", "consultation", "consultations"]) and "appointment" in entity:
+            if (
+                any(
+                    word in query_lower
+                    for word in [
+                        "appointment",
+                        "appointments",
+                        "consultation",
+                        "consultations",
+                    ]
+                )
+                and "appointment" in entity
+            ):
                 bonus += 0.15
 
-            if any(word in query_lower for word in ["prescription", "prescriptions", "medication", "medications", "paracetamol"]) and "prescription" in entity:
+            if (
+                any(
+                    word in query_lower
+                    for word in [
+                        "prescription",
+                        "prescriptions",
+                        "medication",
+                        "medications",
+                        "paracetamol",
+                    ]
+                )
+                and "prescription" in entity
+            ):
                 bonus += 0.20
 
-            if any(word in query_lower for word in ["department", "departments", "cardiology", "neurology"]) and "department" in entity:
+            if (
+                any(
+                    word in query_lower
+                    for word in ["department", "departments", "cardiology", "neurology"]
+                )
+                and "department" in entity
+            ):
                 bonus += 0.15
 
             # 4. Bonus contextuel sur le texte

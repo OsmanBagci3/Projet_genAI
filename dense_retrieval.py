@@ -9,7 +9,6 @@ from typing import Any, Dict, List
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
-
 BASE_DIR = Path(__file__).resolve().parent
 QDRANT_PATH = BASE_DIR / "qdrant_data"
 COLLECTION_NAME = "hospital_context"
@@ -146,6 +145,7 @@ def main() -> None:
             print_results(query, results)
     finally:
         retriever.close()
+
 
 if __name__ == "__main__":
     main()

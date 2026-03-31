@@ -1,8 +1,8 @@
 import requests
+
+from hybrid_retrieval import HybridRetriever
 from query_construction import QueryConstructor
 from rerank_results import HeuristicReranker
-from hybrid_retrieval import HybridRetriever
-
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "mistral"
@@ -11,12 +11,7 @@ MODEL_NAME = "mistral"
 class SQLGenerator:
     def generate(self, prompt: str) -> str:
         response = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": MODEL_NAME,
-                "prompt": prompt,
-                "stream": False
-            }
+            OLLAMA_URL, json={"model": MODEL_NAME, "prompt": prompt, "stream": False}
         )
 
         data = response.json()

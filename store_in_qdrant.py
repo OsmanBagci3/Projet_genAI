@@ -7,7 +7,6 @@ from typing import Any, Dict, List
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
-
 BASE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = BASE_DIR / "context_chunks_embedded.json"
 QDRANT_PATH = BASE_DIR / "qdrant_data"
@@ -27,7 +26,9 @@ def load_embedded_chunks(input_path: Path) -> List[Dict[str, Any]]:
     return data
 
 
-def create_qdrant_collection(client: QdrantClient, collection_name: str, vector_size: int) -> None:
+def create_qdrant_collection(
+    client: QdrantClient, collection_name: str, vector_size: int
+) -> None:
     existing = [c.name for c in client.get_collections().collections]
 
     if collection_name in existing:
@@ -48,7 +49,9 @@ def build_points(chunks: List[Dict[str, Any]]) -> List[PointStruct]:
     for idx, chunk in enumerate(chunks):
         vector = chunk.get("embedding")
         if not vector:
-            raise ValueError(f"Chunk sans embedding : {chunk.get('content_id', 'unknown')}")
+            raise ValueError(
+                f"Chunk sans embedding : {chunk.get('content_id', 'unknown')}"
+            )
 
         payload = {
             "content_id": chunk.get("content_id"),

@@ -1,5 +1,5 @@
-import sqlite3
 import random
+import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -95,20 +95,44 @@ def seed_departments(cursor):
         (5, "Dermatology", 2, "Building C"),
     ]
 
-    cursor.executemany("""
+    cursor.executemany(
+        """
     INSERT INTO departments (department_id, department_name, floor_number, building_name)
     VALUES (?, ?, ?, ?)
-    """, departments_data)
+    """,
+        departments_data,
+    )
 
 
 def seed_patients(cursor):
     first_names = [
-        "Ali", "Lina", "Karim", "Sara", "John", "Emma", "Noah", "Lucas",
-        "Maya", "Adam", "Yasmine", "Hugo", "Lea", "Omar", "Nina"
+        "Ali",
+        "Lina",
+        "Karim",
+        "Sara",
+        "John",
+        "Emma",
+        "Noah",
+        "Lucas",
+        "Maya",
+        "Adam",
+        "Yasmine",
+        "Hugo",
+        "Lea",
+        "Omar",
+        "Nina",
     ]
     last_names = [
-        "Hassan", "Dupont", "Martin", "Benali", "Smith", "Lambert",
-        "Leroy", "Moreau", "Diallo", "Bernard"
+        "Hassan",
+        "Dupont",
+        "Martin",
+        "Benali",
+        "Smith",
+        "Lambert",
+        "Leroy",
+        "Moreau",
+        "Diallo",
+        "Bernard",
     ]
     cities = ["Brussels", "Mons", "Liege", "Namur", "Paris", "Charleroi"]
     genders = ["M", "F"]
@@ -126,33 +150,131 @@ def seed_patients(cursor):
         phone = str(random.randint(100000, 999999))
         patients_data.append((i, first, last, gender, birth_date, city, phone))
 
-    cursor.executemany("""
+    cursor.executemany(
+        """
     INSERT INTO patients (patient_id, first_name, last_name, gender, birth_date, city, phone)
     VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, patients_data)
+    """,
+        patients_data,
+    )
 
 
 def seed_doctors(cursor):
-    first_names = ["Sarah", "Ahmed", "Julie", "Thomas", "Sophie", "Yacine", "Laura", "David", "Nora", "Mehdi"]
-    last_names = ["Martin", "Benali", "Lambert", "Leroy", "Dupuis", "Hassan", "Moreau", "Petit", "Bernard", "Diallo"]
-
-    doctors_data = [
-        (1, first_names[0], last_names[0], "Cardiologist", 1, "sarah.martin@hospital.com"),
-        (2, first_names[1], last_names[1], "Neurologist", 2, "ahmed.benali@hospital.com"),
-        (3, first_names[2], last_names[2], "Pediatrician", 3, "julie.lambert@hospital.com"),
-        (4, first_names[3], last_names[3], "Emergency Physician", 4, "thomas.leroy@hospital.com"),
-        (5, first_names[4], last_names[4], "Dermatologist", 5, "sophie.dupuis@hospital.com"),
-        (6, first_names[5], last_names[5], "Cardiologist", 1, "yacine.hassan@hospital.com"),
-        (7, first_names[6], last_names[6], "Neurologist", 2, "laura.moreau@hospital.com"),
-        (8, first_names[7], last_names[7], "Pediatrician", 3, "david.petit@hospital.com"),
-        (9, first_names[8], last_names[8], "Emergency Physician", 4, "nora.bernard@hospital.com"),
-        (10, first_names[9], last_names[9], "Dermatologist", 5, "mehdi.diallo@hospital.com"),
+    first_names = [
+        "Sarah",
+        "Ahmed",
+        "Julie",
+        "Thomas",
+        "Sophie",
+        "Yacine",
+        "Laura",
+        "David",
+        "Nora",
+        "Mehdi",
+    ]
+    last_names = [
+        "Martin",
+        "Benali",
+        "Lambert",
+        "Leroy",
+        "Dupuis",
+        "Hassan",
+        "Moreau",
+        "Petit",
+        "Bernard",
+        "Diallo",
     ]
 
-    cursor.executemany("""
+    doctors_data = [
+        (
+            1,
+            first_names[0],
+            last_names[0],
+            "Cardiologist",
+            1,
+            "sarah.martin@hospital.com",
+        ),
+        (
+            2,
+            first_names[1],
+            last_names[1],
+            "Neurologist",
+            2,
+            "ahmed.benali@hospital.com",
+        ),
+        (
+            3,
+            first_names[2],
+            last_names[2],
+            "Pediatrician",
+            3,
+            "julie.lambert@hospital.com",
+        ),
+        (
+            4,
+            first_names[3],
+            last_names[3],
+            "Emergency Physician",
+            4,
+            "thomas.leroy@hospital.com",
+        ),
+        (
+            5,
+            first_names[4],
+            last_names[4],
+            "Dermatologist",
+            5,
+            "sophie.dupuis@hospital.com",
+        ),
+        (
+            6,
+            first_names[5],
+            last_names[5],
+            "Cardiologist",
+            1,
+            "yacine.hassan@hospital.com",
+        ),
+        (
+            7,
+            first_names[6],
+            last_names[6],
+            "Neurologist",
+            2,
+            "laura.moreau@hospital.com",
+        ),
+        (
+            8,
+            first_names[7],
+            last_names[7],
+            "Pediatrician",
+            3,
+            "david.petit@hospital.com",
+        ),
+        (
+            9,
+            first_names[8],
+            last_names[8],
+            "Emergency Physician",
+            4,
+            "nora.bernard@hospital.com",
+        ),
+        (
+            10,
+            first_names[9],
+            last_names[9],
+            "Dermatologist",
+            5,
+            "mehdi.diallo@hospital.com",
+        ),
+    ]
+
+    cursor.executemany(
+        """
     INSERT INTO doctors (doctor_id, first_name, last_name, specialty, department_id, email)
     VALUES (?, ?, ?, ?, ?, ?)
-    """, doctors_data)
+    """,
+        doctors_data,
+    )
 
 
 def seed_appointments(cursor):
@@ -190,16 +312,28 @@ def seed_appointments(cursor):
         status = random.choice(statuses)
 
         appointments_data.append(
-            (i, patient_id, doctor_id, department_id, date_str, reason, diagnosis, status)
+            (
+                i,
+                patient_id,
+                doctor_id,
+                department_id,
+                date_str,
+                reason,
+                diagnosis,
+                status,
+            )
         )
 
-    cursor.executemany("""
+    cursor.executemany(
+        """
     INSERT INTO appointments (
         appointment_id, patient_id, doctor_id, department_id,
         appointment_date, reason, diagnosis, status
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, appointments_data)
+    """,
+        appointments_data,
+    )
 
 
 def seed_prescriptions(cursor):
@@ -235,17 +369,27 @@ def seed_prescriptions(cursor):
             duration = random.choice(duration_choices)
 
             prescriptions_data.append(
-                (prescription_id, appointment_id, patient_id, medication, dosage, duration)
+                (
+                    prescription_id,
+                    appointment_id,
+                    patient_id,
+                    medication,
+                    dosage,
+                    duration,
+                )
             )
             prescription_id += 1
 
-    cursor.executemany("""
+    cursor.executemany(
+        """
     INSERT INTO prescriptions (
         prescription_id, appointment_id, patient_id,
         medication_name, dosage, duration_days
     )
     VALUES (?, ?, ?, ?, ?, ?)
-    """, prescriptions_data)
+    """,
+        prescriptions_data,
+    )
 
 
 def main():
