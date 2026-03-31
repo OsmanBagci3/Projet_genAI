@@ -1,0 +1,38 @@
+# Environnement virtuel
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Base de données locale
+hospital.db
+
+# Qdrant stockage local
+qdrant_data/
+
+# Variables d'environnement (clés API)
+.env
+
+# Fichiers de verrou
+*.lock
+
+# Rapport d'évaluation généré automatiquement
+evaluation/evaluation_report.json
+
+# VS Code
+.vscode/
+
+# OS Windows
+Thumbs.db
+desktop.ini
+
+# Dossier cloné vide (inutile)
+Projet_genAI/

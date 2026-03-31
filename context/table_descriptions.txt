@@ -1,0 +1,53 @@
+﻿TABLE patients
+This table stores patient demographic information.
+Each row represents one patient.
+Useful columns:
+- patient_id: unique identifier of a patient
+- first_name, last_name: patient name
+- gender: patient gender
+- birth_date: patient birth date
+- city: city where the patient lives
+- phone: contact number
+
+TABLE departments
+This table stores hospital departments or medical services.
+Each row represents one department.
+Useful columns:
+- department_id: unique identifier of a department
+- department_name: name of the department, such as Cardiology or Neurology
+- floor_number: floor where the department is located
+- building_name: hospital building name
+
+TABLE doctors
+This table stores doctor information.
+Each doctor belongs to exactly one department.
+Useful columns:
+- doctor_id: unique identifier of a doctor
+- first_name, last_name: doctor name
+- specialty: medical specialty
+- department_id: link to the department
+- email: doctor email
+
+TABLE appointments
+This table stores consultations or medical appointments.
+Each appointment links one patient, one doctor, and one department.
+Useful columns:
+- appointment_id: unique identifier of an appointment
+- patient_id: link to the patient
+- doctor_id: link to the doctor
+- department_id: link to the department
+- appointment_date: date of the appointment
+- reason: why the patient came
+- diagnosis: doctor diagnosis
+- status: appointment status such as completed, scheduled, or cancelled
+
+TABLE prescriptions
+This table stores prescribed medications.
+Each prescription is linked to one appointment and one patient.
+Useful columns:
+- prescription_id: unique identifier of a prescription
+- appointment_id: link to the appointment
+- patient_id: link to the patient
+- medication_name: prescribed medicine name
+- dosage: prescribed dosage
+- duration_days: treatment duration in days

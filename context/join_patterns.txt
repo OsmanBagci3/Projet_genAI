@@ -1,0 +1,48 @@
+﻿JOIN PATTERNS
+
+PATTERN 1
+patients -> appointments
+JOIN appointments a ON patients.patient_id = a.patient_id
+
+PATTERN 2
+doctors -> appointments
+JOIN appointments a ON doctors.doctor_id = a.doctor_id
+
+PATTERN 3
+departments -> doctors
+JOIN doctors d ON departments.department_id = d.department_id
+
+PATTERN 4
+departments -> appointments
+JOIN appointments a ON departments.department_id = a.department_id
+
+PATTERN 5
+appointments -> prescriptions
+JOIN prescriptions pr ON appointments.appointment_id = pr.appointment_id
+
+PATTERN 6
+patients -> prescriptions
+JOIN prescriptions pr ON patients.patient_id = pr.patient_id
+
+PATTERN 7
+appointments -> patients -> doctors
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id
+
+PATTERN 8
+appointments -> departments
+FROM appointments a
+JOIN departments dep ON a.department_id = dep.department_id
+
+PATTERN 9
+doctors -> departments -> appointments
+FROM doctors d
+JOIN departments dep ON d.department_id = dep.department_id
+JOIN appointments a ON d.doctor_id = a.doctor_id
+
+PATTERN 10
+patients -> prescriptions -> appointments
+FROM patients p
+JOIN prescriptions pr ON p.patient_id = pr.patient_id
+JOIN appointments a ON pr.appointment_id = a.appointment_id

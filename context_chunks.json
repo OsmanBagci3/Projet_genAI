@@ -1,0 +1,371 @@
+[
+  {
+    "content_id": "schema_patients",
+    "text": "TABLE patients\n- patient_id (INTEGER, PRIMARY KEY)\n- first_name (TEXT)\n- last_name (TEXT)\n- gender (TEXT)\n- birth_date (TEXT)\n- city (TEXT)\n- phone (TEXT)",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "patients",
+    "subtype": "table_definition",
+    "priority": "high"
+  },
+  {
+    "content_id": "schema_departments",
+    "text": "TABLE departments\n- department_id (INTEGER, PRIMARY KEY)\n- department_name (TEXT)\n- floor_number (INTEGER)\n- building_name (TEXT)",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "departments",
+    "subtype": "table_definition",
+    "priority": "high"
+  },
+  {
+    "content_id": "schema_doctors",
+    "text": "TABLE doctors\n- doctor_id (INTEGER, PRIMARY KEY)\n- first_name (TEXT)\n- last_name (TEXT)\n- specialty (TEXT)\n- department_id (INTEGER, FOREIGN KEY -> departments.department_id)\n- email (TEXT)",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "doctors",
+    "subtype": "table_definition",
+    "priority": "high"
+  },
+  {
+    "content_id": "schema_appointments",
+    "text": "TABLE appointments\n- appointment_id (INTEGER, PRIMARY KEY)\n- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id)\n- doctor_id (INTEGER, FOREIGN KEY -> doctors.doctor_id)\n- department_id (INTEGER, FOREIGN KEY -> departments.department_id)\n- appointment_date (TEXT)\n- reason (TEXT)\n- diagnosis (TEXT)\n- status (TEXT)",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "appointments",
+    "subtype": "table_definition",
+    "priority": "high"
+  },
+  {
+    "content_id": "schema_prescriptions",
+    "text": "TABLE prescriptions\n- prescription_id (INTEGER, PRIMARY KEY)\n- appointment_id (INTEGER, FOREIGN KEY -> appointments.appointment_id)\n- patient_id (INTEGER, FOREIGN KEY -> patients.patient_id)\n- medication_name (TEXT)\n- dosage (TEXT)\n- duration_days (INTEGER)",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "prescriptions",
+    "subtype": "table_definition",
+    "priority": "high"
+  },
+  {
+    "content_id": "schema_relationships",
+    "text": "RELATIONSHIPS\n- patients -> appointments : one-to-many\n- doctors -> appointments : one-to-many\n- departments -> doctors : one-to-many\n- departments -> appointments : one-to-many\n- appointments -> prescriptions : one-to-many\n- patients -> prescriptions : one-to-many",
+    "source_file": "schema.txt",
+    "chunk_type": "schema",
+    "entity": "relationships",
+    "subtype": "relationships",
+    "priority": "high"
+  },
+  {
+    "content_id": "desc_patients",
+    "text": "TABLE patients\nThis table stores patient demographic information.\nEach row represents one patient.\nUseful columns:\n- patient_id: unique identifier of a patient\n- first_name, last_name: patient name\n- gender: patient gender\n- birth_date: patient birth date\n- city: city where the patient lives\n- phone: contact number",
+    "source_file": "table_descriptions.txt",
+    "chunk_type": "description",
+    "entity": "patients",
+    "subtype": "business_description",
+    "priority": "medium"
+  },
+  {
+    "content_id": "desc_departments",
+    "text": "TABLE departments\nThis table stores hospital departments or medical services.\nEach row represents one department.\nUseful columns:\n- department_id: unique identifier of a department\n- department_name: name of the department, such as Cardiology or Neurology\n- floor_number: floor where the department is located\n- building_name: hospital building name",
+    "source_file": "table_descriptions.txt",
+    "chunk_type": "description",
+    "entity": "departments",
+    "subtype": "business_description",
+    "priority": "medium"
+  },
+  {
+    "content_id": "desc_doctors",
+    "text": "TABLE doctors\nThis table stores doctor information.\nEach doctor belongs to exactly one department.\nUseful columns:\n- doctor_id: unique identifier of a doctor\n- first_name, last_name: doctor name\n- specialty: medical specialty\n- department_id: link to the department\n- email: doctor email",
+    "source_file": "table_descriptions.txt",
+    "chunk_type": "description",
+    "entity": "doctors",
+    "subtype": "business_description",
+    "priority": "medium"
+  },
+  {
+    "content_id": "desc_appointments",
+    "text": "TABLE appointments\nThis table stores consultations or medical appointments.\nEach appointment links one patient, one doctor, and one department.\nUseful columns:\n- appointment_id: unique identifier of an appointment\n- patient_id: link to the patient\n- doctor_id: link to the doctor\n- department_id: link to the department\n- appointment_date: date of the appointment\n- reason: why the patient came\n- diagnosis: doctor diagnosis\n- status: appointment status such as completed, scheduled, or cancelled",
+    "source_file": "table_descriptions.txt",
+    "chunk_type": "description",
+    "entity": "appointments",
+    "subtype": "business_description",
+    "priority": "medium"
+  },
+  {
+    "content_id": "desc_prescriptions",
+    "text": "TABLE prescriptions\nThis table stores prescribed medications.\nEach prescription is linked to one appointment and one patient.\nUseful columns:\n- prescription_id: unique identifier of a prescription\n- appointment_id: link to the appointment\n- patient_id: link to the patient\n- medication_name: prescribed medicine name\n- dosage: prescribed dosage\n- duration_days: treatment duration in days",
+    "source_file": "table_descriptions.txt",
+    "chunk_type": "description",
+    "entity": "prescriptions",
+    "subtype": "business_description",
+    "priority": "medium"
+  },
+  {
+    "content_id": "vocab_patients_doctors",
+    "text": "﻿patient -> patients\npatients -> patients\nmalade -> patients\npersonne -> patients\ndoctor -> doctors\ndoctors -> doctors\nmédecin -> doctors\nmédecins -> doctors\nspecialist -> doctors\nspecialty -> doctors.specialty\nspécialité -> doctors.specialty",
+    "source_file": "vocabulary.txt",
+    "chunk_type": "vocabulary",
+    "entity": "patients_doctors",
+    "subtype": "semantic_mapping",
+    "priority": "medium"
+  },
+  {
+    "content_id": "vocab_departments_appointments",
+    "text": "department -> departments\ndepartments -> departments\nservice -> departments\nservices -> departments\nunité -> departments\nfloor -> departments.floor_number\nbuilding -> departments.building_name\nappointment -> appointments\nappointments -> appointments\nconsultation -> appointments\nconsultations -> appointments\nrendez-vous -> appointments\nvisit -> appointments\nvisits -> appointments\nreason -> appointments.reason\nmotif -> appointments.reason\ndiagnosis -> appointments.diagnosis\ndiagnostic -> appointments.diagnosis\nstatus -> appointments.status\ndate -> appointments.appointment_date\ncardiology -> departments.department_name\nneurology -> departments.department_name\npediatrics -> departments.department_name\nemergency -> departments.department_name\ndermatology -> departments.department_name",
+    "source_file": "vocabulary.txt",
+    "chunk_type": "vocabulary",
+    "entity": "departments_appointments",
+    "subtype": "semantic_mapping",
+    "priority": "medium"
+  },
+  {
+    "content_id": "vocab_prescriptions",
+    "text": "prescription -> prescriptions\nprescriptions -> prescriptions\nordonnance -> prescriptions\nordonnances -> prescriptions\nmedication -> prescriptions.medication_name\nmédicament -> prescriptions.medication_name\nmedicine -> prescriptions.medication_name\ndosage -> prescriptions.dosage\nduration -> prescriptions.duration_days\ndurée -> prescriptions.duration_days",
+    "source_file": "vocabulary.txt",
+    "chunk_type": "vocabulary",
+    "entity": "prescriptions",
+    "subtype": "semantic_mapping",
+    "priority": "medium"
+  },
+  {
+    "content_id": "example_how_many_patients_are_in_the_database",
+    "text": "QUESTION: How many patients are in the database?\nSQL:\nSELECT COUNT(*) AS total_patients\nFROM patients;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "patients",
+    "subtype": "count",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_doctors_work_in_cardiology",
+    "text": "QUESTION: Which doctors work in Cardiology?\nSQL:\nSELECT d.first_name, d.last_name\nFROM doctors d\nJOIN departments dep ON d.department_id = dep.department_id\nWHERE dep.department_name = 'Cardiology';",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "doctors",
+    "subtype": "filter_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_how_many_appointments_are_in_the_database",
+    "text": "QUESTION: How many appointments are in the database?\nSQL:\nSELECT COUNT(*) AS total_appointments\nFROM appointments;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "count",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_patients_live_in_brussels",
+    "text": "QUESTION: Which patients live in Brussels?\nSQL:\nSELECT first_name, last_name\nFROM patients\nWHERE city = 'Brussels';",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "patients",
+    "subtype": "filter",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_appointments_were_completed",
+    "text": "QUESTION: Which appointments were completed?\nSQL:\nSELECT appointment_id, appointment_date, reason, diagnosis\nFROM appointments\nWHERE status = 'completed';",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "filter",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_medications_were_prescribed",
+    "text": "QUESTION: Which medications were prescribed?\nSQL:\nSELECT DISTINCT medication_name\nFROM prescriptions;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "prescriptions",
+    "subtype": "simple",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_patients_received_paracetamol",
+    "text": "QUESTION: Which patients received Paracetamol?\nSQL:\nSELECT DISTINCT p.first_name, p.last_name\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nWHERE pr.medication_name = 'Paracetamol';",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "prescriptions",
+    "subtype": "filter_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_how_many_appointments_did_each_doctor_have",
+    "text": "QUESTION: How many appointments did each doctor have?\nSQL:\nSELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments\nFROM doctors d\nLEFT JOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id, d.first_name, d.last_name;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "group_by",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_how_many_appointments_took_place_in_each_departmen",
+    "text": "QUESTION: How many appointments took place in each department?\nSQL:\nSELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments\nFROM departments dep\nLEFT JOIN appointments a ON dep.department_id = a.department_id\nGROUP BY dep.department_id, dep.department_name;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "group_by",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_doctor_had_the_most_appointments",
+    "text": "QUESTION: Which doctor had the most appointments?\nSQL:\nSELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments\nFROM doctors d\nJOIN appointments a ON d.doctor_id = a.doctor_id\nGROUP BY d.doctor_id, d.first_name, d.last_name\nORDER BY total_appointments DESC\nLIMIT 1;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "group_by",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_which_patients_have_more_than_one_prescription",
+    "text": "QUESTION: Which patients have more than one prescription?\nSQL:\nSELECT p.first_name, p.last_name, COUNT(pr.prescription_id) AS total_prescriptions\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nGROUP BY p.patient_id, p.first_name, p.last_name\nHAVING COUNT(pr.prescription_id) > 1;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "prescriptions",
+    "subtype": "group_by",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_show_appointments_with_patient_and_doctor_names",
+    "text": "QUESTION: Show appointments with patient and doctor names.\nSQL:\nSELECT\n    a.appointment_id,\n    p.first_name AS patient_first_name,\n    p.last_name AS patient_last_name,\n    d.first_name AS doctor_first_name,\n    d.last_name AS doctor_last_name,\n    a.appointment_date,\n    a.reason\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nJOIN doctors d ON a.doctor_id = d.doctor_id;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "join",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_show_appointments_in_cardiology",
+    "text": "QUESTION: Show appointments in Cardiology.\nSQL:\nSELECT p.first_name, p.last_name, a.appointment_date, a.reason\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nJOIN departments dep ON a.department_id = dep.department_id\nWHERE dep.department_name = 'Cardiology';",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "appointments",
+    "subtype": "filter_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_count_prescriptions_by_medication",
+    "text": "QUESTION: Count prescriptions by medication.\nSQL:\nSELECT medication_name, COUNT(*) AS total_prescriptions\nFROM prescriptions\nGROUP BY medication_name;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "prescriptions",
+    "subtype": "group_by",
+    "priority": "high"
+  },
+  {
+    "content_id": "example_show_doctors_with_their_department_names",
+    "text": "QUESTION: Show doctors with their department names.\nSQL:\nSELECT d.first_name, d.last_name, d.specialty, dep.department_name\nFROM doctors d\nJOIN departments dep ON d.department_id = dep.department_id;",
+    "source_file": "examples.txt",
+    "chunk_type": "example",
+    "entity": "doctors",
+    "subtype": "join",
+    "priority": "high"
+  },
+  {
+    "content_id": "rules_sql_general",
+    "text": "﻿SQL GENERATION RULES\n1. Generate only SQLite-compatible SQL.\n2. Generate only SELECT queries.\n3. Never generate INSERT, UPDATE, DELETE, DROP, ALTER, or CREATE statements.\n4. Use only tables and columns that exist in the provided schema.\n5. Use explicit JOIN conditions when multiple tables are needed.\n6. Prefer readable SQL with table aliases when useful.\n7. If the user asks for counts, use COUNT(*).\n8. If the user asks for unique values, use DISTINCT when needed.\n14. When grouping results, use GROUP BY correctly.\n15. Keep the SQL concise and correct.",
+    "source_file": "sql_rules.txt",
+    "chunk_type": "rule",
+    "entity": "global",
+    "subtype": "general",
+    "priority": "high"
+  },
+  {
+    "content_id": "rules_sql_domain",
+    "text": "﻿SQL GENERATION RULES\n9. If the question refers to a department such as Cardiology, filter using departments.department_name.\n10. If the question refers to medication, use prescriptions.medication_name.\n11. If the question refers to consultations or appointments, use the appointments table.\n12. If the user asks something outside the database scope, do not invent SQL.\n13. If the schema is insufficient to answer, return no SQL and explain the limitation.",
+    "source_file": "sql_rules.txt",
+    "chunk_type": "rule",
+    "entity": "global",
+    "subtype": "domain",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_patients_appointments",
+    "text": "PATTERN 1\npatients -> appointments\nJOIN appointments a ON patients.patient_id = a.patient_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "patients_appointments",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_doctors_appointments",
+    "text": "PATTERN 2\ndoctors -> appointments\nJOIN appointments a ON doctors.doctor_id = a.doctor_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "doctors_appointments",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_departments_doctors",
+    "text": "PATTERN 3\ndepartments -> doctors\nJOIN doctors d ON departments.department_id = d.department_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "departments_doctors",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_departments_appointments",
+    "text": "PATTERN 4\ndepartments -> appointments\nJOIN appointments a ON departments.department_id = a.department_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "departments_appointments",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_appointments_prescriptions",
+    "text": "PATTERN 5\nappointments -> prescriptions\nJOIN prescriptions pr ON appointments.appointment_id = pr.appointment_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "appointments_prescriptions",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_patients_prescriptions",
+    "text": "PATTERN 6\npatients -> prescriptions\nJOIN prescriptions pr ON patients.patient_id = pr.patient_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "patients_prescriptions",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_appointments_patients_doctors",
+    "text": "PATTERN 7\nappointments -> patients -> doctors\nFROM appointments a\nJOIN patients p ON a.patient_id = p.patient_id\nJOIN doctors d ON a.doctor_id = d.doctor_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "appointments_patients_doctors",
+    "subtype": "multi_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_appointments_departments",
+    "text": "PATTERN 8\nappointments -> departments\nFROM appointments a\nJOIN departments dep ON a.department_id = dep.department_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "appointments_departments",
+    "subtype": "simple_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_doctors_departments_appointments",
+    "text": "PATTERN 9\ndoctors -> departments -> appointments\nFROM doctors d\nJOIN departments dep ON d.department_id = dep.department_id\nJOIN appointments a ON d.doctor_id = a.doctor_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "doctors_departments_appointments",
+    "subtype": "multi_join",
+    "priority": "high"
+  },
+  {
+    "content_id": "join_patients_prescriptions_appointments",
+    "text": "PATTERN 10\npatients -> prescriptions -> appointments\nFROM patients p\nJOIN prescriptions pr ON p.patient_id = pr.patient_id\nJOIN appointments a ON pr.appointment_id = a.appointment_id",
+    "source_file": "join_patterns.txt",
+    "chunk_type": "join_pattern",
+    "entity": "patients_prescriptions_appointments",
+    "subtype": "multi_join",
+    "priority": "high"
+  }
+]

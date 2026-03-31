@@ -1,0 +1,110 @@
+﻿QUESTION: How many patients are in the database?
+SQL:
+SELECT COUNT(*) AS total_patients
+FROM patients;
+
+QUESTION: Which doctors work in Cardiology?
+SQL:
+SELECT d.first_name, d.last_name
+FROM doctors d
+JOIN departments dep ON d.department_id = dep.department_id
+WHERE dep.department_name = 'Cardiology';
+
+QUESTION: Show all doctors and their specialties
+SQL:
+SELECT d.first_name, d.last_name, d.specialty
+FROM doctors d;
+
+QUESTION: How many appointments are in the database?
+SQL:
+SELECT COUNT(*) AS total_appointments
+FROM appointments;
+
+QUESTION: Which patients live in Brussels?
+SQL:
+SELECT first_name, last_name
+FROM patients
+WHERE city = 'Brussels';
+
+QUESTION: Which appointments were completed?
+SQL:
+SELECT appointment_id, appointment_date, reason, diagnosis
+FROM appointments
+WHERE status = 'completed';
+
+QUESTION: Which medications were prescribed?
+SQL:
+SELECT DISTINCT medication_name
+FROM prescriptions;
+
+QUESTION: Which patients received Paracetamol?
+SQL:
+SELECT DISTINCT p.first_name, p.last_name
+FROM patients p
+JOIN prescriptions pr ON p.patient_id = pr.patient_id
+WHERE pr.medication_name = 'Paracetamol';
+
+QUESTION: How many appointments did each doctor have?
+SQL:
+SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments
+FROM doctors d
+LEFT JOIN appointments a ON d.doctor_id = a.doctor_id
+GROUP BY d.doctor_id, d.first_name, d.last_name;
+
+QUESTION: How many appointments took place in each department?
+SQL:
+SELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments
+FROM departments dep
+LEFT JOIN appointments a ON dep.department_id = a.department_id
+GROUP BY dep.department_id, dep.department_name;
+
+QUESTION: Which doctor had the most appointments?
+SQL:
+SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments
+FROM doctors d
+JOIN appointments a ON d.doctor_id = a.doctor_id
+GROUP BY d.doctor_id, d.first_name, d.last_name
+ORDER BY total_appointments DESC
+LIMIT 1;
+
+QUESTION: Which patients have more than one prescription?
+SQL:
+SELECT p.first_name, p.last_name, COUNT(pr.prescription_id) AS total_prescriptions
+FROM patients p
+JOIN prescriptions pr ON p.patient_id = pr.patient_id
+GROUP BY p.patient_id, p.first_name, p.last_name
+HAVING COUNT(pr.prescription_id) > 1;
+
+QUESTION: Show appointments with patient and doctor names.
+SQL:
+SELECT
+    a.appointment_id,
+    p.first_name AS patient_first_name,
+    p.last_name AS patient_last_name,
+    d.first_name AS doctor_first_name,
+    d.last_name AS doctor_last_name,
+    a.appointment_date,
+    a.reason
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN doctors d ON a.doctor_id = d.doctor_id;
+
+QUESTION: Show appointments in Cardiology.
+SQL:
+SELECT p.first_name, p.last_name, a.appointment_date, a.reason
+FROM appointments a
+JOIN patients p ON a.patient_id = p.patient_id
+JOIN departments dep ON a.department_id = dep.department_id
+WHERE dep.department_name = 'Cardiology';
+
+QUESTION: Count prescriptions by medication.
+SQL:
+SELECT medication_name, COUNT(*) AS total_prescriptions
+FROM prescriptions
+GROUP BY medication_name;
+
+QUESTION: Show doctors with their department names.
+SQL:
+SELECT d.first_name, d.last_name, d.specialty, dep.department_name
+FROM doctors d
+JOIN departments dep ON d.department_id = dep.department_id;

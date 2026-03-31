@@ -1,0 +1,50 @@
+﻿SQL GENERATION RULES (MUST FOLLOW ALL)
+
+ALLOWED OPERATIONS:
+1. Generate ONLY SQLite-compatible SELECT queries.
+2. Use ONLY tables: patients, departments, doctors, appointments, prescriptions
+3. Use ONLY columns explicitly listed in the schema.
+4. Use JOINs between tables with foreign key relationships.
+5. Use WHERE clauses for filtering.
+6. Use GROUP BY with HAVING for aggregations.
+7. Use ORDER BY for sorting.
+8. Use DISTINCT when uniqueness is needed.
+9. Use table aliases (e.g., p, d, a) for readability.
+10. Use COUNT(*), SUM(), AVG() for aggregations when needed.
+11. Use LEFT JOIN for one-to-many if all records needed.
+12. Use LIMIT for result limiting when asked.
+
+STRICTLY FORBIDDEN:
+1. ❌ NEVER use INSERT, UPDATE, DELETE, DROP, ALTER, CREATE statements.
+2. ❌ NEVER invent tables (e.g., medical_history, patient_history, consultations).
+3. ❌ NEVER invent columns (e.g., age, last_visit, appointment_time, phone_number).
+4. ❌ NEVER use subqueries unless absolutely necessary.
+5. ❌ NEVER use UNION or UNION ALL.
+6. ❌ NEVER use CTEs (WITH clauses).
+7. ❌ NEVER use window functions (ROW_NUMBER, RANK, etc.).
+8. ❌ NEVER join tables without valid foreign key relationships.
+9. ❌ NEVER use column names that don't exist in schema.
+10. ❌ NEVER use table names that don't exist in schema.
+
+ALIAS & QUALIFICATION RULES (CRITICAL):
+1. ✅ ALWAYS use table aliases in FROM clause: FROM doctors d, patients p, etc.
+2. ✅ ALWAYS qualify column names with alias: d.specialty, p.first_name, NOT specialty, first_name
+3. ✅ NEVER mix qualified and unqualified in same query
+4. ✅ NEVER mix table name with alias: use d.first_name, NEVER doctors.first_name AND d.first_name
+5. ✅ ALWAYS define aliases in FROM/JOIN before using in SELECT/WHERE
+6. ✅ Use standard aliases: p=patients, d=doctors, dep=departments, a=appointments, pr=prescriptions
+
+SEMANTIC RULES:
+1. If user asks about "consultations", use appointments table.
+2. If user asks about "doctors by specialty", filter doctors.specialty.
+3. If user asks about "medications", use prescriptions.medication_name.
+4. If user asks about "departments", join with departments table using department_id.
+5. If user asks about "patient info", use patients table columns only.
+
+IF SCHEMA IS INSUFFICIENT:
+- Return: SELECT 1 WHERE 0;
+- This returns 0 rows and avoids hallucination.
+
+IF UNCERTAIN:
+- Refer to REFERENCE EXAMPLES section.
+- Follow the exact pattern shown in examples.

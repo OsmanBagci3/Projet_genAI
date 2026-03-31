@@ -1,0 +1,51 @@
+﻿patient -> patients
+patients -> patients
+malade -> patients
+personne -> patients
+
+doctor -> doctors
+doctors -> doctors
+médecin -> doctors
+médecins -> doctors
+specialist -> doctors
+specialty -> doctors.specialty
+spécialité -> doctors.specialty
+
+department -> departments
+departments -> departments
+service -> departments
+services -> departments
+unité -> departments
+floor -> departments.floor_number
+building -> departments.building_name
+
+appointment -> appointments
+appointments -> appointments
+consultation -> appointments
+consultations -> appointments
+rendez-vous -> appointments
+visit -> appointments
+visits -> appointments
+reason -> appointments.reason
+motif -> appointments.reason
+diagnosis -> appointments.diagnosis
+diagnostic -> appointments.diagnosis
+status -> appointments.status
+date -> appointments.appointment_date
+
+prescription -> prescriptions
+prescriptions -> prescriptions
+ordonnance -> prescriptions
+ordonnances -> prescriptions
+medication -> prescriptions.medication_name
+médicament -> prescriptions.medication_name
+medicine -> prescriptions.medication_name
+dosage -> prescriptions.dosage
+duration -> prescriptions.duration_days
+durée -> prescriptions.duration_days
+
+cardiology -> departments.department_name
+neurology -> departments.department_name
+pediatrics -> departments.department_name
+emergency -> departments.department_name
+dermatology -> departments.department_name

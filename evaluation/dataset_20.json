@@ -1,0 +1,142 @@
+[
+  {
+    "id": "Q01",
+    "question": "How many patients are in the database?",
+    "expected_sql": "SELECT COUNT(*) AS total_patients FROM patients;",
+    "required_sql_contains": ["from patients"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q02",
+    "question": "Which doctors work in Cardiology?",
+    "expected_sql": "SELECT d.first_name, d.last_name FROM doctors d JOIN departments dep ON d.department_id = dep.department_id WHERE dep.department_name = 'Cardiology' ORDER BY d.last_name, d.first_name;",
+    "required_sql_contains": ["from doctors", "join departments", "cardiology"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q03",
+    "question": "How many appointments are in the database?",
+    "expected_sql": "SELECT COUNT(*) AS total_appointments FROM appointments;",
+    "required_sql_contains": ["from appointments"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q04",
+    "question": "Which appointments were completed?",
+    "expected_sql": "SELECT appointment_id, appointment_date, reason, diagnosis FROM appointments WHERE status = 'completed' ORDER BY appointment_date DESC, appointment_id DESC;",
+    "required_sql_contains": ["from appointments", "status", "completed"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q05",
+    "question": "Which medications were prescribed?",
+    "expected_sql": "SELECT DISTINCT medication_name FROM prescriptions ORDER BY medication_name;",
+    "required_sql_contains": ["from prescriptions", "medication_name"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q06",
+    "question": "Which patients received Paracetamol?",
+    "expected_sql": "SELECT DISTINCT p.first_name, p.last_name FROM patients p JOIN prescriptions pr ON p.patient_id = pr.patient_id WHERE pr.medication_name = 'Paracetamol' ORDER BY p.last_name, p.first_name;",
+    "required_sql_contains": ["join prescriptions", "paracetamol"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q07",
+    "question": "How many appointments did each doctor have?",
+    "expected_sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments FROM doctors d LEFT JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.first_name, d.last_name ORDER BY total_appointments DESC, d.last_name, d.first_name;",
+    "required_sql_contains": ["from doctors", "join appointments", "group by"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q08",
+    "question": "How many appointments took place in each department?",
+    "expected_sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments FROM departments dep LEFT JOIN appointments a ON dep.department_id = a.department_id GROUP BY dep.department_id, dep.department_name ORDER BY total_appointments DESC, dep.department_name;",
+    "required_sql_contains": ["from departments", "group by"],
+    "forbidden_sql_contains": ["d.first_name", "d.last_name"]
+  },
+  {
+    "id": "Q09",
+    "question": "Which doctor had the most appointments?",
+    "expected_sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments FROM doctors d JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.first_name, d.last_name ORDER BY total_appointments DESC LIMIT 1;",
+    "required_sql_contains": ["from doctors", "join appointments", "limit 1"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q10",
+    "question": "Which patients have more than one prescription?",
+    "expected_sql": "SELECT p.first_name, p.last_name, COUNT(pr.prescription_id) AS total_prescriptions FROM patients p JOIN prescriptions pr ON p.patient_id = pr.patient_id GROUP BY p.patient_id, p.first_name, p.last_name HAVING COUNT(pr.prescription_id) > 1 ORDER BY total_prescriptions DESC, p.last_name, p.first_name;",
+    "required_sql_contains": ["having", "prescription"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q11",
+    "question": "Show appointments in Cardiology.",
+    "expected_sql": "SELECT p.first_name, p.last_name, a.appointment_date, a.reason FROM appointments a JOIN patients p ON a.patient_id = p.patient_id JOIN departments dep ON a.department_id = dep.department_id WHERE dep.department_name = 'Cardiology' ORDER BY a.appointment_date DESC, p.last_name, p.first_name;",
+    "required_sql_contains": ["join departments", "cardiology"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q12",
+    "question": "Count prescriptions by medication.",
+    "expected_sql": "SELECT medication_name, COUNT(*) AS total_prescriptions FROM prescriptions GROUP BY medication_name ORDER BY total_prescriptions DESC, medication_name;",
+    "required_sql_contains": ["from prescriptions", "group by"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q13",
+    "question": "What are the 5 most recent appointments with patient names?",
+    "expected_sql": "SELECT a.appointment_date, p.first_name, p.last_name, a.reason FROM appointments a JOIN patients p ON a.patient_id = p.patient_id ORDER BY a.appointment_date DESC, a.appointment_id DESC LIMIT 5;",
+    "required_sql_contains": ["order by", "limit 5"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q14",
+    "question": "Show all departments ranked by number of completed appointments.",
+    "expected_sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS total_completed FROM departments dep JOIN appointments a ON dep.department_id = a.department_id WHERE a.status = 'completed' GROUP BY dep.department_id, dep.department_name ORDER BY total_completed DESC, dep.department_name;",
+    "required_sql_contains": ["completed", "group by", "from departments"],
+    "forbidden_sql_contains": ["d.first_name", "d.last_name"]
+  },
+  {
+    "id": "Q15",
+    "question": "Which diagnosis appears most frequently in Emergency?",
+    "expected_sql": "SELECT a.diagnosis, COUNT(*) AS total_cases FROM appointments a JOIN departments dep ON a.department_id = dep.department_id WHERE dep.department_name = 'Emergency' GROUP BY a.diagnosis ORDER BY total_cases DESC, a.diagnosis LIMIT 1;",
+    "required_sql_contains": ["diagnosis", "emergency", "group by"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q16",
+    "question": "Show patients who visited more than one department and how many departments they visited.",
+    "expected_sql": "SELECT p.first_name, p.last_name, COUNT(DISTINCT a.department_id) AS total_departments FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.patient_id, p.first_name, p.last_name HAVING COUNT(DISTINCT a.department_id) > 1 ORDER BY total_departments DESC, p.last_name, p.first_name;",
+    "required_sql_contains": ["count(distinct", "having"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q17",
+    "question": "Which city has the highest number of patients with at least one appointment?",
+    "expected_sql": "SELECT p.city, COUNT(DISTINCT p.patient_id) AS total_patients FROM patients p JOIN appointments a ON p.patient_id = a.patient_id GROUP BY p.city ORDER BY total_patients DESC, p.city LIMIT 1;",
+    "required_sql_contains": ["city", "count(distinct"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q18",
+    "question": "Which medications are most prescribed for Neurology appointments?",
+    "expected_sql": "SELECT pr.medication_name, COUNT(*) AS total_prescriptions FROM prescriptions pr JOIN appointments a ON pr.appointment_id = a.appointment_id JOIN departments dep ON a.department_id = dep.department_id WHERE dep.department_name = 'Neurology' GROUP BY pr.medication_name ORDER BY total_prescriptions DESC, pr.medication_name;",
+    "required_sql_contains": ["neurology", "join appointments", "group by"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q19",
+    "question": "List the top 5 doctors by number of appointments.",
+    "expected_sql": "SELECT d.first_name, d.last_name, COUNT(a.appointment_id) AS total_appointments FROM doctors d JOIN appointments a ON d.doctor_id = a.doctor_id GROUP BY d.doctor_id, d.first_name, d.last_name ORDER BY total_appointments DESC, d.last_name, d.first_name LIMIT 5;",
+    "required_sql_contains": ["from doctors", "limit 5", "group by"],
+    "forbidden_sql_contains": []
+  },
+  {
+    "id": "Q20",
+    "question": "For each department, show total appointments and distinct patients.",
+    "expected_sql": "SELECT dep.department_name, COUNT(a.appointment_id) AS total_appointments, COUNT(DISTINCT a.patient_id) AS total_patients FROM departments dep LEFT JOIN appointments a ON dep.department_id = a.department_id GROUP BY dep.department_id, dep.department_name ORDER BY total_appointments DESC, dep.department_name;",
+    "required_sql_contains": ["count(distinct", "from departments", "group by"],
+    "forbidden_sql_contains": []
+  }
+]
