@@ -18,10 +18,8 @@ from peft import LoraConfig, TaskType, get_peft_model
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    DataCollatorForSeq2Seq,
-    TrainingArguments,
 )
-from trl import SFTTrainer
+from trl import SFTConfig, SFTTrainer
 
 # ── Modele: TinyLlama 1.1B (petit, rapide, fonctionne en local) ───────────────
 MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
@@ -39,7 +37,7 @@ def format_example(example: dict) -> str:
     )
 
 
-def main(epochs: int, output_dir: str, max_seq_length: int) -> None:
+def main(epochs: int, output_dir: str) -> None:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     use_fp16 = torch.cuda.is_available()
     print(f"[INFO] Device: {device}  |  FP16: {use_fp16}")
@@ -67,7 +65,7 @@ def main(epochs: int, output_dir: str, max_seq_length: int) -> None:
         from transformers import BitsAndBytesConfig
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
         )
         model = AutoModelForCausalLM.from_pretrained(
@@ -100,7 +98,7 @@ def main(epochs: int, output_dir: str, max_seq_length: int) -> None:
     model.print_trainable_parameters()
 
     # ── Arguments d'entrainement ─────────────────────────────────────────────
-    training_args = TrainingArguments(
+    training_args = SFTConfig(
         output_dir=output_dir,
         num_train_epochs=epochs,
         per_device_train_batch_size=1,
@@ -113,7 +111,8 @@ def main(epochs: int, output_dir: str, max_seq_length: int) -> None:
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        fp16=use_fp16,
+        fp16=False,
+        bf16=use_fp16,
         report_to="none",
         dataloader_pin_memory=False,
     )
@@ -121,13 +120,11 @@ def main(epochs: int, output_dir: str, max_seq_length: int) -> None:
     # ── Trainer ───────────────────────────────────────────────────────────────
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         train_dataset=train_ds,
         eval_dataset=val_ds,
         args=training_args,
         formatting_func=format_example,
-        max_seq_length=max_seq_length,
-        data_collator=DataCollatorForSeq2Seq(tokenizer, pad_to_multiple_of=8),
     )
 
     print("\n[INFO] Début de l'entraînement...")
@@ -152,4 +149,4 @@ if __name__ == "__main__":
                         help="Longueur max des sequences (defaut: 512)")
     args = parser.parse_args()
 
-    main(epochs=args.epochs, output_dir=args.output, max_seq_length=args.max_seq)
+    main(epochs=args.epochs, output_dir=args.output)

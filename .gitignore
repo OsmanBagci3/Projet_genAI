@@ -27,6 +27,9 @@ qdrant_data/
 # Rapport d'évaluation généré automatiquement
 evaluation/evaluation_report.json
 
+# Checkpoints intermédiaires fine-tuning (garder seulement final/)
+finetune/model_output/checkpoint-*/
+
 # VS Code
 .vscode/
 

@@ -10,11 +10,6 @@ FROM doctors d
 JOIN departments dep ON d.department_id = dep.department_id
 WHERE dep.department_name = 'Cardiology';
 
-QUESTION: Show all doctors and their specialties
-SQL:
-SELECT d.first_name, d.last_name, d.specialty
-FROM doctors d;
-
 QUESTION: How many appointments are in the database?
 SQL:
 SELECT COUNT(*) AS total_appointments
